@@ -4,15 +4,7 @@ import { motion } from "framer-motion";
 
 // Data pengalaman kerja dengan tanggal mulai dan selesai
 const experiences = [
-  {
-    title: "Full Stack Developer",
-    company: "PT Winnicode Garuda Teknologi",
-    startDate: "Feb 2025",
-    endDate: "Present",
-    description:[
-
-    ]
-  },
+  
   {
     title: "Full Stack Developer Internship",
     company: "Dinas Cipta Karya Tata Ruang dan Pertanahan Provinsi DKI Jakarta",

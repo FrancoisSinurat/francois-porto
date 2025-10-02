@@ -17,14 +17,14 @@ export default function Hero() {
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 1 }}
-        className="relative px-12 py-16 rounded-2xl   flex flex-col items-center justify-center w-full max-w-3xl"
+        className="relative px-12 py-16 rounded-2xl   flex flex-col items-center justify-center w-full "
       >
-        <h1 className="text-4xl font-extrabold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
-          Francois Novalentino Sinurat
+        <h1 className="text-7xl font-extrabold bg-gradient-to-r from-blue-400 to-indigo-500 bg-clip-text text-transparent">
+          FRANCOIS NOVALENTINO SINURAT
         </h1>
 
-        <p className="mt-6 text-lg text-gray-300 max-w-xl">
-          Software Development Enthusiast
+        <p className="mt-6 text-7xl text-gray-300 text-bold">
+          Full Stack Developer
         </p>
 
         <div className="mt-8">

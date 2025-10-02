@@ -1,11 +1,9 @@
-"use client";
-
+'use client'
 import Image from "next/image";
 import { Dialog, DialogTrigger, DialogContent, DialogTitle } from "@/components/ui/dialog";
 import { useState } from "react";
 import { motion } from "framer-motion";
 
-// Project Type Definition
 type Project = {
   id: number;
   title: string;
@@ -15,37 +13,42 @@ type Project = {
   skill: string;
   overview: string;
   details: string[];
-  projectLink?: string; // Tambahkan properti untuk link GitHub
+  projectLink?: string;
 };
 
-
-// Project Data
 const projects: Project[] = [
   {
     id: 1,
     title: "Sinity Course",
     description: "Final Project at Institut Teknologi Sumatera",
-    images: [
-      "/images/project-1/sinity.png",
-      "/images/project-1/sinity-2.png"
-    ],
+    images: ["/images/project-1/sinity.png", "/images/project-1/sinity-2.png"],
     date: "Desember 2024 - Present",
-    skill: "Next.js, Tailwind CSS, ShadCN UI",
+    skill: "Next.js, Tailwind CSS, ShadCN UI, FastAPI, Python, Cloud Run, TruncatedSVD, MAE, RMSE",
     overview: "A web-based course recommendation system with hybrid filtering.",
-    details: ["Provides personalized course recommendations.", "Built with Next.js and Tailwind CSS.", "Deployed on cloud server."],
-    projectLink: "", // Tambahkan link GitHub
+    details: [
+      "Developed a hybrid course recommendation system using Content-Based and Collaborative Filtering.",
+      "Built a modern, responsive frontend using Next.js, Tailwind CSS, and ShadCN UI.",
+      "Designed and deployed a RESTful API using FastAPI on Google Cloud Run.",
+      "Implemented user preference features to enhance personalization.",
+      "Integrated TruncatedSVD for dimensionality reduction in collaborative filtering.",
+      "Evaluated system performance using MAE and RMSE metrics.",
+      "Connected frontend with backend via real-time API calls."
+    ],
+    projectLink: "",
   },
   {
     id: 2,
     title: "My Profile",
     description: "Portfolio",
-    images: [
-      "/images/porto/porto.png",
-    ],
+    images: ["/images/porto/porto.png"],
     date: "February 2025 - Present",
     skill: "Next.js, React.js, Tailwind CSS, ShadCN UI",
     overview: "A personal portfolio built using Next.js and Tailwind CSS.",
-    details: ["Showcases my projects and skills.", "Built with modern web technologies.", "Optimized for performance."],
+    details: [
+      "Showcases my projects and skills.",
+      "Built with modern web technologies.",
+      "Optimized for performance."
+    ],
     projectLink: "https://github.com/FrancoisSinurat/francois-porto",
   },
   {
@@ -56,22 +59,26 @@ const projects: Project[] = [
     date: "June - August 2024",
     skill: "Laravel, MySQL, Bootstrap",
     overview: "A web application for managing company assets efficiently.",
-    details: ["Implemented the Asset Group feature with CRUD functionality using Laravel's MVC architecture.", "Integrated role-based access control to manage user permissions securely.", "Utilized Laravel, MySQL, and Bootstrap for a structured and responsive asset management system."],
+    details: [
+      "Implemented the Asset Group feature with CRUD functionality using Laravel's MVC architecture.",
+      "Integrated role-based access control to manage user permissions securely.",
+      "Utilized Laravel, MySQL, and Bootstrap for a structured and responsive asset management system."
+    ],
     projectLink: "",
   },
   {
     id: 4,
     title: "Rekomenin",
     description: "Capstone Project at Bangkit Academy",
-    images: [
-      "/images/project-3/rekomenin.png",
-      "/images/project-3/rekomenin-2.png",
-      "/images/project-3/rekomenin-3.png",
-    ],
+    images: ["/images/project-3/rekomenin.png", "/images/project-3/rekomenin-2.png", "/images/project-3/rekomenin-3.png"],
     date: "April - June 2024",
     skill: "Next.js, HTML, CSS, JavaScript, Node.js, Google Cloud Run, Cloud SQL",
     overview: "A recommendation system leveraging Machine Learning and cloud deployment.",
-    details: ["Developed a responsive front-end web interface.", "Implemented scalable backend system.", "Deployed using Google Cloud Run."],
+    details: [
+      "Developed a responsive front-end web interface.",
+      "Implemented scalable backend system.",
+      "Deployed using Google Cloud Run."
+    ],
     projectLink: "https://github.com/FrancoisSinurat/rekomenin-fe",
   },
   {
@@ -82,27 +89,57 @@ const projects: Project[] = [
     date: "Desember 2023 - January 2024",
     skill: "PHP, Bootstrap, SQL",
     overview: "A web-based system for managing village population circulation.",
-    details: ["Implemented secure login system.", "Designed responsive UI with Bootstrap.", "Managed structured data storage with SQL."],
+    details: [
+      "Implemented secure login system.",
+      "Designed responsive UI with Bootstrap.",
+      "Managed structured data storage with SQL."
+    ],
     projectLink: "https://github.com/FrancoisSinurat/Lapduk-KKN",
   },
-  
 ];
-
 
 export default function Projects() {
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
-
+  const [previewImage, setPreviewImage] = useState<string | null>(null);
+  
   return (
     <section id="projects" className="py-16 text-center">
       <h2 className="text-4xl font-bold text-gray-900">My Projects</h2>
       <p className="text-gray-600 mt-2">A collection of my latest projects showcasing my expertise.</p>
 
-      {/* Project Grid */}
+            {/* Preview Image Modal */}
+            {previewImage && (
+        <div
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-80"
+          onClick={() => setPreviewImage(null)}
+        >
+          <div
+            className="relative max-w-4xl w-full mx-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <button
+              className="absolute top-2 right-2 text-white hover:text-gray-300"
+              onClick={() => setPreviewImage(null)}
+            >
+              <X size={30} />
+            </button>
+            <Image
+              src={previewImage}
+              alt="Preview"
+              layout="responsive"
+              width={800}
+              height={600}
+              objectFit="contain"
+              className="rounded-xl"
+            />
+          </div>
+        </div>
+      )}
+
       <div className="mt-10 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6">
         {projects.map((project) => (
           <Dialog key={project.id} onOpenChange={(isOpen) => setSelectedProject(isOpen ? project : null)}>
             <DialogTrigger asChild>
-              {/* Card dengan efek hover */}
               <motion.div
                 whileHover={{ y: -5, boxShadow: "0px 10px 20px rgba(0, 0, 0, 0.2)" }}
                 transition={{ duration: 0.3, ease: "easeOut" }}
@@ -118,20 +155,18 @@ export default function Projects() {
                     alt="Project Preview"
                     width={600}
                     height={400}
-                    layout="intrinsic"
                     className="rounded-lg transition-transform duration-200 group-hover:scale-105"
                   />
                 </div>
               </motion.div>
             </DialogTrigger>
 
-            {/* Modal Project Details */}
             {selectedProject && (
               <DialogContent className="max-w-3xl ">
                 <DialogTitle className="text-2xl font-bold text-gray-900">{selectedProject.title}</DialogTitle>
-                <p className=" text-gray-800 font-bold">📅 {project.date}</p>
+                <p className=" text-gray-800 font-bold">📅 {selectedProject.date}</p>
                 <p className="text-lg font-medium text-gray-800">🔹 Skills: {selectedProject.skill}</p>
-                {/* Link GitHub */}
+
                 {selectedProject.projectLink && (
                   <a
                     href={selectedProject.projectLink}
@@ -143,27 +178,34 @@ export default function Projects() {
                   </a>
                 )}
 
-                {/* Job Responsibilities */}
                 <div>
                   <p className="text-lg font-bold text-gray-900">📌 Responsibilities:</p>
                   <ul className="mt-2 list-disc list-inside text-gray-700">
-                    {selectedProject.details.map((detail, i) => (
-                      <li key={i}>{detail}</li>
-                    ))}
+                    {selectedProject.details.map((detail, i) => {
+                      const skills = selectedProject.skill.split(",").map(s => s.trim());
+                      let formattedDetail = detail;
+                      skills.forEach(skill => {
+                        const regex = new RegExp(`(${skill.replace(/[-/\\^$*+?.()|[\]{}]/g, '\\$&')})`, 'gi');
+                        formattedDetail = formattedDetail.replace(regex, '<strong>$1</strong>');
+                      });
+                      return (
+                        <li key={i} dangerouslySetInnerHTML={{ __html: formattedDetail }} />
+                      );
+                    })}
                   </ul>
                 </div>
 
-                {/* Image Carousel */}
                 <div className="mt-6 flex overflow-x-auto space-x-4 scrollbar-hide">
                   {selectedProject.images.map((img, i) => (
-                    <Image
-                      key={i}
-                      src={img}
-                      alt={`Project ${selectedProject.id} Image ${i + 1}`}
-                      width={400}
-                      height={300}
-                      className="rounded-lg shadow-md cursor-pointer transition hover:scale-105"
-                    />
+                    <div key={i} className="relative w-full h-48">
+                      <Image
+                        src={img}
+                        alt={`Project ${selectedProject.id} Image ${i + 1}`}
+                        layout="fill"
+                        objectFit="cover"
+                        className="rounded-lg shadow-md cursor-pointer transition hover:scale-105"
+                      />
+                    </div>
                   ))}
                 </div>
               </DialogContent>
@@ -171,6 +213,8 @@ export default function Projects() {
           </Dialog>
         ))}
       </div>
+
+
     </section>
   );
 }
