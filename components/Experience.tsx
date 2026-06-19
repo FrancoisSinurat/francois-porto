@@ -1,96 +1,94 @@
 "use client";
 
 import { motion } from "framer-motion";
+import SectionHeader from "@/components/ui/SectionHeader";
 
-// Data pengalaman kerja dengan tanggal mulai dan selesai
 const experiences = [
-  
   {
-    title: "Full Stack Developer Internship",
-    company: "Dinas Cipta Karya Tata Ruang dan Pertanahan Provinsi DKI Jakarta",
-    startDate: "June",
-    endDate: "Aug 2024",
-    description:[
-      "Adopted the MVC architecture in Laravel to enhance system modularity, maintainability, and performance.",
-      "Developed and integrated the AssetGroup Model with Laravel’s Eloquent ORM for effective data storage and management.",
-      "Implemented essential features like Asset Groups using Laravel Framework, enabling efficient asset categorization and management",
-    ]
+    title: "Back End Developer",
+    company: "PT Teknologi Operator Prima",
+    period: "Aug 2025 — Present",
+    type: "Full-time · On-site · Tangerang Regency",
+    highlights: [
+      "Developed Mobile Banking backend services using Golang, handling core business logic and high-performance APIs.",
+      "Developed Gateway Service using Golang for integration with payment gateway, third-party APIs, and internal microservices.",
+      "Optimized MySQL queries (stored procedures, functions) and improved performance through indexing & query tuning.",
+      "Integrated external systems via SFTP and managed transactional data using PostgreSQL with optimized indexing.",
+      "Implemented Redis for caching and RabbitMQ for asynchronous messaging to improve system performance and scalability.",
+      "Maintained Digital Banking applications using Delphi for system stability and legacy support.",
+      "Developed ERP modules using PHP (Slim Framework) with MongoDB.",
+      "Performed API testing and UAT using Postman.",
+    ],
   },
   {
-    title: "Cloud Computing Alumni",
-    company: "Bangkit Academy led by Google, GoTo, and Traveloka",
-    startDate: "Feb ",
-    endDate: "Jul 2024",
-    description:[
-      "Utilize Google Cloud Platform (GCP).",
-      "I collaborated with a team to complete a capstone project using Next.js, Node.js, and Cloud SQL that involved designing and implementing a cloud-based solution.",
-      "Deployed the application on Google Cloud Run. leveraging Google Cloud Platform (GCP) for efficient scaling and performance.",
+    title: "Full Stack Development Internship",
+    company: "Dinas Cipta Karya, Tata Ruang dan Pertanahan Provinsi DKI Jakarta",
+    period: "June 2024 — Aug 2024",
+    type: "Internship · On-site · Jakarta",
+    highlights: [
+      "Implemented essential features like Asset Groups using Laravel Framework, enabling efficient asset categorization and management.",
+      "Developed and integrated the AssetGroup Model with Laravel's Eloquent ORM for effective data storage and management.",
+      "Adopted the MVC architecture in Laravel to enhance system modularity, maintainability, and performance.",
+    ],
+  },
+  {
+    title: "Cloud Computing — Bangkit Academy",
+    company: "Bangkit Academy led by Google, Tokopedia, Gojek, and Traveloka",
+    period: "Feb 2024 — Jul 2024",
+    type: "Technical Program · Remote ",
+    highlights: [
+      "Utilized Google Cloud Platform (GCP) for cloud-based learning and project development.",
+      "Collaborated with a team to complete a capstone project using Next.js, Node.js, and Cloud SQL that involved designing and implementing a cloud-based solution.",
+      "Deployed the application on Google Cloud Run, leveraging GCP for efficient scaling and performance.",
     ],
   },
 ];
 
-
 export default function WorkExp() {
   return (
-    <div className="py-16 max-w-5xl mx-auto ">
-      <motion.h2
-        className="text-3xl font-bold text-center  text-slate-800 dark:text-white mb-8"
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.6 }}
-      >
-        Work Experience
-      </motion.h2>
+    <div className="section-padding section-container">
+      <div className="grid lg:grid-cols-[280px_1fr] gap-10 lg:gap-16 items-start">
+        <SectionHeader
+          label="Experience"
+          title="Where I've worked"
+          description="Hands-on experience from industry programs to production fintech systems."
+        />
 
-      <div className="relative flex flex-col space-y-8">
-        {experiences.map((exp, index) => (
-          <motion.div
-            key={index}
-            initial={{ opacity: 0, y: 50, scale: 0.9 }}
-            whileInView={{ opacity: 1, y: 0, scale: 1 }}
-            viewport={{ once: true, amount: 0.3 }}
-            transition={{ duration: 0.5, delay: index * 0.2 }}
-            whileHover={{
-              scale: 1.05,
-              transition: { duration: 0.3 },
-            }}
-            className="flex items-start gap-6"
-          >
-            {/* Bullet & Date Group */}
-            <div className="flex flex-col items-center">
-              <div className="w-4 h-4 bg-indigo-500 dark:bg-blue-400 rounded-full"></div>
-              {index !== experiences.length - 1 && (
-                <div className="w-1 bg-indigo-500 dark:bg-blue-400 h-full"></div>
-              )}
-              <motion.div
-                initial={{ opacity: 0, x: -30 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                viewport={{ once: true, amount: 0.3 }}
-                transition={{ duration: 0.5, delay: index * 0.2 }}
-                className="mt-2 text-sm font-medium text-slate-600 dark:text-gray-300 text-center"
-              >
-                {exp.startDate} - {exp.endDate}
-              </motion.div>
-            </div>
+        <div className="space-y-6">
+          {experiences.map((exp, index) => (
+            <motion.article
+              key={index}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ delay: index * 0.06 }}
+              className="card-surface overflow-hidden"
+            >
+              <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-3 p-5 sm:p-6 border-b border-[hsl(var(--surface-border)/0.6)] bg-[hsl(var(--page-bg-alt)/0.5)]">
+                <div>
+                  <h3 className="text-lg font-bold text-[hsl(var(--foreground))]">{exp.title}</h3>
+                  <p className="text-sm text-[hsl(var(--muted-foreground))] mt-1 leading-relaxed">{exp.company}</p>
+                </div>
+                <div className="flex flex-col sm:items-end gap-1 shrink-0">
+                  <span className="text-sm font-semibold text-[hsl(var(--foreground))]">{exp.period}</span>
+                  <span className="text-xs font-medium text-[hsl(var(--accent))]">{exp.type}</span>
+                </div>
+              </div>
 
-            {/* Card Experience */}
-            <div className="p-6 bg-white dark:bg-slate-800 rounded-lg shadow-lg transition-all duration-300 hover:shadow-2xl w-full cursor-pointer">
-              <h3 className="text-xl font-semibold text-slate-900 dark:text-white">
-                {exp.title}
-              </h3>
-              <p className="text-slate-600 dark:text-gray-300">{exp.company}</p>
-
-              {/* List Descriptions */}
-              <ul className="mt-2 list-disc list-inside text-slate-500 dark:text-gray-400">
-                {exp.description.map((desc, i) => (
-                  <li key={i} className="leading-relaxed">
-                    {desc}
+              <ul className="p-5 sm:p-6 space-y-3">
+                {exp.highlights.map((item, i) => (
+                  <li
+                    key={i}
+                    className="flex gap-3 text-sm text-[hsl(var(--muted-foreground))] leading-relaxed"
+                  >
+                    <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent))]" />
+                    <span>{item}</span>
                   </li>
                 ))}
               </ul>
-            </div>
-          </motion.div>
-        ))}
+            </motion.article>
+          ))}
+        </div>
       </div>
     </div>
   );

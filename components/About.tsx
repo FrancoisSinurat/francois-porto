@@ -1,63 +1,82 @@
-"use client"; // Pastikan ini ada di baris pertama
+"use client";
 
 import { motion } from "framer-motion";
-import { FaHtml5, FaCss3Alt, FaJs, FaPhp, FaDatabase, FaNodeJs, FaReact, FaCloud, FaLaravel } from "react-icons/fa";
-import { SiNextdotjs } from "react-icons/si";
-import { useState, useEffect } from "react";
+import {
+  FaJs, FaPhp, FaDatabase, FaNodeJs, FaReact, FaCloud, FaLaravel, FaPython,
+} from "react-icons/fa";
+import {
+  SiNextdotjs, SiGoland, SiPostgresql, SiRedis, SiRabbitmq, SiTailwindcss,
+} from "react-icons/si";
+import SectionHeader from "@/components/ui/SectionHeader";
 
-const skills = [
-  { name: "HTML", experience: "<1 year", icon: <FaHtml5 className="text-orange-500 text-4xl" /> },
-  { name: "CSS", experience: "<1 year", icon: <FaCss3Alt className="text-sky-400 text-4xl" /> },
-  { name: "JavaScript", experience: "<1 year", icon: <FaJs className="text-yellow-500 text-4xl" /> },
-  { name: "MySQL", experience: "6 months", icon: <FaDatabase className="text-gray-500 text-4xl" /> },
-  { name: "PHP", experience: "4 months", icon: <FaPhp className="text-blue-600 text-4xl" /> },
-  { name: "Laravel", experience: "3 months", icon: <FaLaravel className="text-red-600 text-4xl" /> },
-  { name: "Google Cloud", experience: "3 months", icon: <FaCloud className="text-blue-400 text-4xl" /> },
-  { name: "Next.js", experience: "3 months", icon: <SiNextdotjs className="text-black text-4xl" /> },
-  { name: "React.js", experience: "3 months", icon: <FaReact className="text-blue-500 text-4xl" /> },
-  { name: "Node.js", experience: "3 months", icon: <FaNodeJs className="text-green-500 text-4xl" /> },
+const allSkills = [
+  { name: "Golang", icon: <SiGoland className="text-cyan-700" /> },
+  { name: "Node.js", icon: <FaNodeJs className="text-green-700" /> },
+  { name: "JavaScript", icon: <FaJs className="text-amber-600" /> },
+  { name: "PHP", icon: <FaPhp className="text-indigo-700" /> },
+  { name: "Python", icon: <FaPython className="text-blue-600" /> },
+  { name: "Next.js", icon: <SiNextdotjs /> },
+  { name: "React", icon: <FaReact className="text-sky-600" /> },
+  { name: "Laravel", icon: <FaLaravel className="text-red-600" /> },
+  { name: "FastAPI", icon: <FaPython className="text-emerald-700" /> },
+  { name: "Tailwind", icon: <SiTailwindcss className="text-sky-500" /> },
+  { name: "PostgreSQL", icon: <SiPostgresql className="text-blue-700" /> },
+  { name: "MySQL", icon: <FaDatabase className="text-orange-700" /> },
+  { name: "Redis", icon: <SiRedis className="text-red-600" /> },
+  { name: "RabbitMQ", icon: <SiRabbitmq className="text-orange-600" /> },
+  { name: "GCP", icon: <FaCloud className="text-blue-600" /> },
 ];
 
 export default function About() {
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true);
-  }, []);
-
-  if (!isClient) return null; // Mencegah error SSR
-
   return (
-    <motion.div
-      className="py-16 px-6 flex flex-col bg-gradient-to-r from-[#e0eafc] to-[#cfdef3] text-[#1b263b] items-center text-center"
-      initial={{ opacity: 0, y: 50 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{ duration: 1 }}
-    >
-      <h2 className="text-4xl font-bold mb-4 tracking-wide">About Me</h2>
-      <p className="text-lg max-w-2xl leading-relaxed">
-        A final-year Informatics Engineering student at Institut Teknologi Sumatera with a strong foundation in software development. I specialize in Next.js, Node.js, and Google Cloud Services, building scalable and efficient web applications. Proficient in PHP, HTML, CSS, and JavaScript, I adapt quickly to new technologies and strive for continuous improvement. Passionate about innovation, I aim to deliver impactful and effective solutions in software development.
-      </p>
+    <div className="section-padding section-container">
+      <div className="grid lg:grid-cols-[280px_1fr] gap-10 lg:gap-16 items-start">
+        <SectionHeader
+          label="About"
+          title="Engineer who ships reliable systems"
+          description="ITERA graduate with production experience in fintech and enterprise backends."
+        />
 
-      <div className="mt-10 w-full max-w-3xl">
-        <h3 className="text-2xl font-semibold mb-6">Skills & Experience</h3>
+        <div className="space-y-8">
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="card-surface p-6 sm:p-8"
+          >
+            <p className="text-[hsl(var(--muted-foreground))] leading-relaxed text-base sm:text-lg">
+              I build scalable web applications, RESTful APIs, and system integrations
+              using Golang, Node.js, PHP, Python, Next.js, and React. Experienced in
+              financial systems with PostgreSQL, MySQL, Redis, RabbitMQ, and GCP.
+            </p>
+            <p className="mt-4 text-[hsl(var(--muted-foreground))] leading-relaxed">
+              Currently working as Back End Developer at PT Teknologi Operator Prima,
+              developing mobile banking services and payment gateway integrations.
+            </p>
+          </motion.div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-8">
-          {skills.map((skill, index) => (
-            <motion.div
-              key={index}
-              className="flex flex-col items-center cursor-pointer bg-white shadow-lg rounded-lg p-4 hover:shadow-xl transition-all duration-300"
-              initial={{ scale: 1 }}
-              whileHover={{ scale: 1.1 }}
-              transition={{ duration: 0.3 }}
-            >
-              {skill.icon}
-              <span className="text-lg font-medium mt-2">{skill.name}</span>
-              <span className="text-sm italic text-gray-600">{skill.experience}</span>
-            </motion.div>
-          ))}
+          <div>
+            <p className="text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))] mb-4">
+              Tech I work with
+            </p>
+            <div className="flex flex-wrap gap-2">
+              {allSkills.map((skill, i) => (
+                <motion.span
+                  key={skill.name}
+                  initial={{ opacity: 0, scale: 0.95 }}
+                  whileInView={{ opacity: 1, scale: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ delay: i * 0.02 }}
+                  className="inline-flex items-center gap-2 bg-[hsl(var(--surface))] border border-[hsl(var(--surface-border)/0.7)] rounded-md px-3 py-2 text-sm font-medium text-[hsl(var(--foreground))]"
+                >
+                  <span className="text-base">{skill.icon}</span>
+                  {skill.name}
+                </motion.span>
+              ))}
+            </div>
+          </div>
         </div>
       </div>
-    </motion.div>
+    </div>
   );
 }
