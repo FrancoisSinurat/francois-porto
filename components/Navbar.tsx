@@ -8,7 +8,7 @@ import ThemeToggle from "@/components/ThemeToggle";
 import { handleSectionClick, scrollToSection } from "@/lib/scroll";
 import { cn } from "@/lib/utils";
 
-const navItems = ["About", "Experience", "Projects", "Contact"];
+const navItems = ["About", "Experience", "Activity", "Projects", "Contact"];
 
 export default function Navbar() {
   const [isOpen, setIsOpen] = useState(false);

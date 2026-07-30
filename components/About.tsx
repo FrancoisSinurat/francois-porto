@@ -1,16 +1,28 @@
 "use client";
 
+import Image from "next/image";
 import { motion } from "framer-motion";
 import {
   FaJs, FaPhp, FaDatabase, FaNodeJs, FaReact, FaCloud, FaLaravel, FaPython,
 } from "react-icons/fa";
 import {
-  SiNextdotjs, SiGoland, SiPostgresql, SiRedis, SiRabbitmq, SiTailwindcss,
+  SiNextdotjs, SiPostgresql, SiRedis, SiRabbitmq, SiTailwindcss,
 } from "react-icons/si";
 import SectionHeader from "@/components/ui/SectionHeader";
 
 const allSkills = [
-  { name: "Golang", icon: <SiGoland className="text-cyan-700" /> },
+  {
+    name: "Golang",
+    icon: (
+      <Image
+        src="/images/go-logo-fuchsia.png"
+        alt="Go"
+        width={20}
+        height={20}
+        className="h-5 w-5 object-contain"
+      />
+    ),
+  },
   { name: "Node.js", icon: <FaNodeJs className="text-green-700" /> },
   { name: "JavaScript", icon: <FaJs className="text-amber-600" /> },
   { name: "PHP", icon: <FaPhp className="text-indigo-700" /> },
