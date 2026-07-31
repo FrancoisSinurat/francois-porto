@@ -172,7 +172,8 @@ export async function getGitlabActivity(): Promise<GitlabActivity> {
 
   const calendar = mergeCalendars(publicCalendar, pushStats.calendar);
 
-  let { pushes, commits } = pushStats;
+  const { pushes } = pushStats;
+  let { commits } = pushStats;
   if (commits === 0 && pushes === 0) {
     commits = Object.values(calendar).reduce((a, b) => a + b, 0);
   }
