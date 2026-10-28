@@ -8,15 +8,32 @@ import { handleSectionClick } from "@/lib/scroll";
 export default function Hero() {
   return (
     <section className="hero-surface relative min-h-screen overflow-hidden">
+      {/* Animated Grid & Ambient Orbs */}
       <div
-        className="absolute inset-0 opacity-[0.35]"
+        className="absolute inset-0 bg-hero-grid opacity-80"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 30%, hsl(239 50% 25%) 0%, transparent 45%),
-            radial-gradient(circle at 80% 70%, hsl(210 40% 20%) 0%, transparent 40%)`,
+          maskImage:
+            "radial-gradient(ellipse 85% 75% at 50% 45%, black 35%, transparent 100%)",
+          WebkitMaskImage:
+            "radial-gradient(ellipse 85% 75% at 50% 45%, black 35%, transparent 100%)",
+        }}
+      />
+      <div
+        className="absolute -top-24 left-[10%] w-[460px] h-[460px] rounded-full blur-[110px] animate-float-slow pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, hsl(239 84% 62% / 0.28) 0%, transparent 70%)",
+        }}
+      />
+      <div
+        className="absolute bottom-[-10%] right-[8%] w-[420px] h-[420px] rounded-full blur-[110px] animate-float-reverse pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, hsl(195 85% 55% / 0.22) 0%, transparent 70%)",
         }}
       />
 
-      <div className="relative section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-20 pb-16">
+      <div className="relative z-10 section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-20 pb-16">
         <motion.div
           initial={{ opacity: 0, y: 24 }}
           animate={{ opacity: 1, y: 0 }}

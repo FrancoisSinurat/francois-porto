@@ -101,9 +101,29 @@ html {
   }
 
   .card-surface {
-    background-color: hsl(var(--surface));
+    background-color: hsl(var(--surface) / 0.88);
+    backdrop-filter: blur(12px);
     @apply rounded-2xl border;
     border-color: hsl(var(--surface-border) / 0.75);
+  }
+
+  .bg-grid-pattern {
+    background-size: 40px 40px;
+    background-image: 
+      linear-gradient(to right, hsl(var(--foreground) / 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(var(--foreground) / 0.04) 1px, transparent 1px);
+  }
+
+  .bg-hero-grid {
+    background-size: 44px 44px;
+    background-image: 
+      linear-gradient(to right, hsl(210 40% 98% / 0.045) 1px, transparent 1px),
+      linear-gradient(to bottom, hsl(210 40% 98% / 0.045) 1px, transparent 1px);
+  }
+
+  .bg-dot-pattern {
+    background-image: radial-gradient(hsl(var(--foreground) / 0.08) 1px, transparent 1px);
+    background-size: 24px 24px;
   }
 
   .accent-line {
@@ -130,4 +150,51 @@ html {
     background-color: hsl(var(--surface-border));
     border-radius: 9999px;
   }
+}
+
+@keyframes floatSlow {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(30px, -25px, 0) scale(1.06);
+  }
+  66% {
+    transform: translate3d(-20px, 20px, 0) scale(0.95);
+  }
+}
+
+@keyframes floatReverse {
+  0%, 100% {
+    transform: translate3d(0, 0, 0) scale(1);
+  }
+  33% {
+    transform: translate3d(-30px, 25px, 0) scale(0.94);
+  }
+  66% {
+    transform: translate3d(25px, -20px, 0) scale(1.05);
+  }
+}
+
+@keyframes pulseGlow {
+  0%, 100% {
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.65;
+    transform: scale(1.08);
+  }
+}
+
+.animate-float-slow {
+  animation: floatSlow 18s ease-in-out infinite;
+}
+
+.animate-float-reverse {
+  animation: floatReverse 22s ease-in-out infinite;
+}
+
+.animate-pulse-glow {
+  animation: pulseGlow 10s ease-in-out infinite;
 }

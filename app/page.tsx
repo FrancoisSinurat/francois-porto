@@ -6,20 +6,22 @@ import Hero from "@/components/Hero";
 import WorkExp from "@/components/Experience";
 import DevActivity from "@/components/DevActivity";
 import Contact from "@/components/Contact";
+import AnimatedBackground from "@/components/ui/AnimatedBackground";
 
 export default function Home() {
   return (
-    <div className="min-h-full flex flex-col page-surface">
+    <div className="relative min-h-full flex flex-col page-surface overflow-x-clip">
+      <AnimatedBackground />
       <Navbar />
-      <main className="flex-1">
+      <main className="relative z-10 flex-1">
         <Hero />
-        <section id="about" className="scroll-mt-nav border-t border-[hsl(var(--surface-border)/0.4)]">
+        <section id="about" className="relative scroll-mt-nav border-t border-[hsl(var(--surface-border)/0.4)]">
           <About />
         </section>
-        <section id="experience" className="scroll-mt-nav page-surface-alt border-y border-[hsl(var(--surface-border)/0.4)]">
+        <section id="experience" className="relative scroll-mt-nav bg-[hsl(var(--page-bg-alt)/0.65)] backdrop-blur-[2px] border-y border-[hsl(var(--surface-border)/0.4)]">
           <WorkExp />
         </section>
-        <section id="activity" className="scroll-mt-nav border-b border-[hsl(var(--surface-border)/0.4)]">
+        <section id="activity" className="relative scroll-mt-nav border-b border-[hsl(var(--surface-border)/0.4)]">
           <DevActivity />
         </section>
         <Projects />
