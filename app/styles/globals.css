@@ -242,10 +242,52 @@ html {
   }
 }
 
+@keyframes heroLetterIn {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 110%, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+.hero-letter-enter {
+  opacity: 0;
+  transform: translate3d(0, 110%, 0);
+  animation: heroLetterIn 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: calc(0.08s + (var(--i, 0) * 0.028s));
+}
+
+.hero-letter-hover {
+  display: inline-block;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
+.hero-letter-hover:hover {
+  color: hsl(166 70% 72%);
+  transform: translate3d(0, -6px, 0);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .text-gradient-motion {
     animation: none;
     background-image: linear-gradient(135deg, hsl(168 55% 58%), hsl(190 75% 62%));
     background-size: 100% 100%;
+  }
+
+  .hero-letter-enter {
+    opacity: 1;
+    transform: none;
+    animation: none;
+  }
+
+  .hero-letter-hover {
+    transition: none;
+  }
+
+  .hero-letter-hover:hover {
+    transform: none;
   }
 }

@@ -110,6 +110,8 @@ export default function HeroCursorOrbs() {
     const positions = ORBS.map(() => ({ x: 0, y: 0, ready: false }));
     let width = 1;
     let height = 1;
+    let originX = 0;
+    let originY = 0;
     let mouseX = 0;
     let mouseY = 0;
     let lastMouseX = 0;
@@ -122,10 +124,13 @@ export default function HeroCursorOrbs() {
     let lastTime = performance.now();
     let elapsed = 0;
 
+    // Cache bounds — getBoundingClientRect every move forces layout thrash
     const measure = () => {
       const rect = root.getBoundingClientRect();
       width = Math.max(rect.width, 1);
       height = Math.max(rect.height, 1);
+      originX = rect.left;
+      originY = rect.top;
     };
 
     const restOf = (orb: OrbConfig) => ({
@@ -134,14 +139,11 @@ export default function HeroCursorOrbs() {
     });
 
     const onPointerMove = (e: PointerEvent) => {
-      const rect = root.getBoundingClientRect();
-      inside =
-        e.clientX >= rect.left &&
-        e.clientX <= rect.right &&
-        e.clientY >= rect.top &&
-        e.clientY <= rect.bottom;
-      mouseX = e.clientX - rect.left;
-      mouseY = e.clientY - rect.top;
+      const x = e.clientX - originX;
+      const y = e.clientY - originY;
+      inside = x >= 0 && x <= width && y >= 0 && y <= height;
+      mouseX = x;
+      mouseY = y;
     };
 
     const onPointerLeaveWindow = () => {
@@ -232,7 +234,8 @@ export default function HeroCursorOrbs() {
 
     window.addEventListener("pointermove", onPointerMove, { passive: true });
     window.addEventListener("pointerleave", onPointerLeaveWindow);
-    window.addEventListener("resize", measure);
+    window.addEventListener("resize", measure, { passive: true });
+    window.addEventListener("scroll", measure, { passive: true });
     raf = requestAnimationFrame(tick);
 
     return () => {
@@ -240,6 +243,7 @@ export default function HeroCursorOrbs() {
       window.removeEventListener("pointermove", onPointerMove);
       window.removeEventListener("pointerleave", onPointerLeaveWindow);
       window.removeEventListener("resize", measure);
+      window.removeEventListener("scroll", measure);
     };
   }, []);
 
