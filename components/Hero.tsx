@@ -4,11 +4,13 @@ import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowDown, Github, Gitlab, Linkedin, MapPin } from "lucide-react";
 import { handleSectionClick } from "@/lib/scroll";
+import MotionName from "@/components/ui/MotionName";
+import HeroCursorOrbs from "@/components/ui/HeroCursorOrbs";
+import Wobble from "@/components/ui/Wobble";
 
 export default function Hero() {
   return (
     <section className="hero-surface relative min-h-screen overflow-hidden">
-      {/* Animated Grid & Ambient Orbs */}
       <div
         className="absolute inset-0 bg-hero-grid opacity-80"
         style={{
@@ -18,26 +20,13 @@ export default function Hero() {
             "radial-gradient(ellipse 85% 75% at 50% 45%, black 35%, transparent 100%)",
         }}
       />
-      <div
-        className="absolute -top-24 left-[10%] w-[460px] h-[460px] rounded-full blur-[110px] animate-float-slow pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, hsl(239 84% 62% / 0.28) 0%, transparent 70%)",
-        }}
-      />
-      <div
-        className="absolute bottom-[-10%] right-[8%] w-[420px] h-[420px] rounded-full blur-[110px] animate-float-reverse pointer-events-none"
-        style={{
-          background:
-            "radial-gradient(circle, hsl(195 85% 55% / 0.22) 0%, transparent 70%)",
-        }}
-      />
+      <HeroCursorOrbs />
 
       <div className="relative z-10 section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-20 pb-16">
         <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.45 }}
           className="text-center lg:text-left"
         >
           <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
@@ -51,13 +40,10 @@ export default function Hero() {
             </span>
           </div>
 
-          <h1 className="text-[clamp(2rem,5.5vw,3.75rem)] font-extrabold leading-[1.08] tracking-tight">
-            <span className="block text-[hsl(var(--hero-fg))]">Francois Novalentino</span>
-            <span className="block mt-1 text-gradient">Sinurat</span>
-          </h1>
+          <MotionName />
 
           <p className="mt-4 text-xl sm:text-2xl font-semibold text-[hsl(var(--accent))]">
-            Back End Developer
+            Software Developer
           </p>
 
           <p className="mt-4 max-w-xl mx-auto lg:mx-0 text-[hsl(var(--hero-muted))] leading-relaxed text-base sm:text-lg">
@@ -69,7 +55,7 @@ export default function Hero() {
             <a
               href="#projects"
               onClick={(e) => handleSectionClick(e, "projects")}
-              className="inline-flex items-center justify-center rounded-xl bg-[hsl(var(--accent))] px-7 py-3 text-sm font-semibold text-white hover:bg-[hsl(var(--accent-hover))] transition-colors shadow-lg shadow-indigo-500/20"
+              className="inline-flex items-center justify-center rounded-xl bg-[hsl(var(--accent))] px-7 py-3 text-sm font-semibold text-white hover:bg-[hsl(var(--accent-hover))] transition-colors shadow-lg shadow-teal-500/25"
             >
               View My Work
             </a>
@@ -108,7 +94,7 @@ export default function Hero() {
           transition={{ duration: 0.6, delay: 0.15 }}
           className="flex justify-center lg:justify-end"
         >
-          <div className="relative">
+          <Wobble intensity="strong" className="relative">
             <div className="absolute -inset-3 rounded-3xl border-2 border-[hsl(var(--accent)/0.35)] rotate-3" />
             <div className="absolute -inset-3 rounded-3xl border border-[hsl(222_20%_28%)] -rotate-2" />
             <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden border-2 border-[hsl(222_20%_30%)]">
@@ -126,14 +112,14 @@ export default function Hero() {
                 Role
               </p>
               <p className="text-sm font-semibold text-[hsl(var(--foreground))] mt-0.5">
-                Back End Developer
+                Software Developer
               </p>
             </div>
 
             <div className="absolute -top-3 -right-3 sm:-right-6 rounded-xl bg-[hsl(var(--accent))] px-3 py-2 text-xs font-bold text-white shadow-lg">
               Bekasi, ID
             </div>
-          </div>
+          </Wobble>
         </motion.div>
       </div>
 

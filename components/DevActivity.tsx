@@ -11,6 +11,7 @@ import {
   Gitlab,
 } from "lucide-react";
 import SectionHeader from "@/components/ui/SectionHeader";
+import Wobble from "@/components/ui/Wobble";
 import { cn } from "@/lib/utils";
 
 type Platform = "gitlab" | "github";
@@ -121,25 +122,27 @@ function StatCard({
   delay: number;
 }) {
   return (
-    <motion.div
-      initial={{ opacity: 0, y: 14 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
-      transition={{ delay }}
-      className="card-surface p-4 sm:p-6"
-    >
-      <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4">
-        <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))]">
-          {label}
+    <Wobble intensity="soft" className="h-full">
+      <motion.div
+        initial={{ opacity: 0, y: 14 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ delay }}
+        className="card-surface p-4 sm:p-6 h-full"
+      >
+        <div className="flex items-center justify-between gap-2 mb-3 sm:mb-4">
+          <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))]">
+            {label}
+          </p>
+          <span className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-[hsl(var(--accent-soft))] text-[hsl(var(--accent))]">
+            <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
+          </span>
+        </div>
+        <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[hsl(var(--foreground))] tabular-nums">
+          {formatNumber(value)}
         </p>
-        <span className="inline-flex h-7 w-7 sm:h-8 sm:w-8 items-center justify-center rounded-lg bg-[hsl(var(--accent-soft))] text-[hsl(var(--accent))]">
-          <Icon className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-        </span>
-      </div>
-      <p className="text-2xl sm:text-3xl md:text-4xl font-extrabold tracking-tight text-[hsl(var(--foreground))] tabular-nums">
-        {formatNumber(value)}
-      </p>
-    </motion.div>
+      </motion.div>
+    </Wobble>
   );
 }
 
@@ -316,34 +319,36 @@ function PlatformPanel({ platform }: { platform: Platform }) {
         <StatCard label="Pushes" value={state.data.pushes} icon={ArrowUpFromLine} delay={0.1} />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 14 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ delay: 0.12 }}
-        className="card-surface p-4 sm:p-6"
-      >
-        <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
-          <div>
-            <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))]">
-              Contribution activity
-            </p>
-            <p className="mt-1 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
-              Last 12 months on {meta.label}
-            </p>
+      <Wobble intensity="medium">
+        <motion.div
+          initial={{ opacity: 0, y: 14 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: 0.12 }}
+          className="card-surface p-4 sm:p-6"
+        >
+          <div className="flex flex-wrap items-center justify-between gap-2 sm:gap-3 mb-4 sm:mb-5">
+            <div>
+              <p className="text-[10px] sm:text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))]">
+                Contribution activity
+              </p>
+              <p className="mt-1 text-xs sm:text-sm text-[hsl(var(--muted-foreground))]">
+                Last 12 months on {meta.label}
+              </p>
+            </div>
+            <a
+              href={state.data.profileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[hsl(var(--accent))] hover:text-[hsl(var(--accent-hover))] transition-colors"
+            >
+              @{state.data.username}
+              <ExternalLink className="h-3.5 w-3.5" />
+            </a>
           </div>
-          <a
-            href={state.data.profileUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-[hsl(var(--accent))] hover:text-[hsl(var(--accent-hover))] transition-colors"
-          >
-            @{state.data.username}
-            <ExternalLink className="h-3.5 w-3.5" />
-          </a>
-        </div>
-        <Heatmap calendar={state.data.calendar} />
-      </motion.div>
+          <Heatmap calendar={state.data.calendar} />
+        </motion.div>
+      </Wobble>
     </div>
   );
 }

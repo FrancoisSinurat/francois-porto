@@ -12,20 +12,25 @@ html {
 @layer base {
   :root {
     --nav-height: 3.5rem;
-    --page-bg: 220 26% 97%;
-    --page-bg-alt: 220 22% 93%;
+    --spot-x: 50%;
+    --spot-y: 35%;
+    --spot-size: 440px;
+    /* Clean bright canvas — less gray, more fresh */
+    --page-bg: 160 50% 98%;
+    --page-bg-alt: 158 40% 95%;
     --surface: 0 0% 100%;
-    --surface-border: 220 16% 86%;
-    --foreground: 222 47% 11%;
-    --muted-foreground: 220 9% 42%;
-    --hero-bg: 222 47% 9%;
-    --hero-fg: 210 40% 98%;
-    --hero-muted: 215 16% 65%;
-    --accent: 239 84% 67%;
-    --accent-hover: 239 84% 60%;
-    --accent-soft: 239 60% 94%;
-    --accent-glow: 239 84% 67%;
-    --open-badge: 142 55% 42%;
+    --surface-border: 160 20% 88%;
+    --foreground: 210 40% 10%;
+    --muted-foreground: 200 12% 36%;
+    --hero-bg: 210 40% 8%;
+    --hero-fg: 160 40% 98%;
+    --hero-muted: 180 16% 68%;
+    /* Rich teal — higher saturation so it doesn't look muddy/gray */
+    --accent: 166 72% 34%;
+    --accent-hover: 166 72% 28%;
+    --accent-soft: 160 55% 92%;
+    --accent-glow: 166 70% 42%;
+    --open-badge: 152 58% 38%;
     --background: var(--page-bg);
     --card: var(--surface);
     --card-foreground: var(--foreground);
@@ -46,20 +51,20 @@ html {
   }
 
   .dark {
-    --page-bg: 222 24% 9%;
-    --page-bg-alt: 222 22% 12%;
-    --surface: 222 20% 13%;
-    --surface-border: 222 16% 22%;
-    --foreground: 210 25% 93%;
-    --muted-foreground: 215 14% 62%;
-    --hero-bg: 222 30% 6%;
-    --hero-fg: 210 30% 96%;
-    --hero-muted: 215 12% 58%;
-    --accent: 239 75% 72%;
-    --accent-hover: 239 75% 78%;
-    --accent-soft: 239 35% 18%;
-    --accent-glow: 239 75% 72%;
-    --open-badge: 142 50% 48%;
+    --page-bg: 210 32% 7%;
+    --page-bg-alt: 205 28% 10%;
+    --surface: 205 26% 12%;
+    --surface-border: 195 18% 22%;
+    --foreground: 160 30% 96%;
+    --muted-foreground: 180 14% 64%;
+    --hero-bg: 210 36% 5%;
+    --hero-fg: 160 30% 97%;
+    --hero-muted: 180 14% 60%;
+    --accent: 166 70% 52%;
+    --accent-hover: 166 70% 60%;
+    --accent-soft: 166 35% 16%;
+    --accent-glow: 166 70% 48%;
+    --open-badge: 152 55% 46%;
   }
 
   * {
@@ -126,14 +131,43 @@ html {
     background-size: 24px 24px;
   }
 
+  /* SVG noise grain — keeps background from looking flat */
+  .bg-noise {
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+    background-repeat: repeat;
+    background-size: 180px 180px;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .animate-float-slow,
+    .animate-float-reverse,
+    .animate-pulse-glow {
+      animation: none !important;
+    }
+  }
+
   .accent-line {
     @apply w-10 h-1 rounded-full;
-    background: linear-gradient(90deg, hsl(var(--accent)), hsl(239 70% 78%));
+    background: linear-gradient(90deg, hsl(var(--accent)), hsl(185 70% 55%));
   }
 
   .text-gradient {
     @apply bg-clip-text text-transparent;
-    background-image: linear-gradient(135deg, hsl(239 75% 75%), hsl(210 80% 70%));
+    background-image: linear-gradient(135deg, hsl(168 55% 58%), hsl(190 75% 62%));
+  }
+
+  .text-gradient-motion {
+    @apply bg-clip-text text-transparent;
+    background-image: linear-gradient(
+      90deg,
+      hsl(168 55% 58%),
+      hsl(190 75% 62%),
+      hsl(166 85% 74%),
+      hsl(190 75% 62%),
+      hsl(168 55% 58%)
+    );
+    background-size: 200% 100%;
+    animation: nameShine 7s linear infinite;
   }
 
   .scrollbar-thin {
@@ -197,4 +231,21 @@ html {
 
 .animate-pulse-glow {
   animation: pulseGlow 10s ease-in-out infinite;
+}
+
+@keyframes nameShine {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .text-gradient-motion {
+    animation: none;
+    background-image: linear-gradient(135deg, hsl(168 55% 58%), hsl(190 75% 62%));
+    background-size: 100% 100%;
+  }
 }

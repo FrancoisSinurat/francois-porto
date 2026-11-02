@@ -9,6 +9,7 @@ import {
   SiNextdotjs, SiPostgresql, SiRedis, SiRabbitmq, SiTailwindcss,
 } from "react-icons/si";
 import SectionHeader from "@/components/ui/SectionHeader";
+import Wobble from "@/components/ui/Wobble";
 
 const allSkills = [
   {
@@ -50,22 +51,25 @@ export default function About() {
         />
 
         <div className="space-y-8">
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="card-surface p-6 sm:p-8"
-          >
-            <p className="text-[hsl(var(--muted-foreground))] leading-relaxed text-base sm:text-lg">
-              I build scalable web applications, RESTful APIs, and system integrations
-              using Golang, Node.js, PHP, Python, Next.js, and React. Experienced in
-              financial systems with PostgreSQL, MySQL, Redis, RabbitMQ, and GCP.
-            </p>
-            <p className="mt-4 text-[hsl(var(--muted-foreground))] leading-relaxed">
-              Currently working as Back End Developer at PT Teknologi Operator Prima,
-              developing mobile banking services and payment gateway integrations.
-            </p>
-          </motion.div>
+          <Wobble intensity="medium">
+            <motion.div
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              className="card-surface p-6 sm:p-8"
+            >
+              <p className="text-[hsl(var(--muted-foreground))] leading-relaxed text-base sm:text-lg">
+                I build scalable web applications, RESTful APIs, and system integrations
+                using Golang, Node.js, PHP, Python, Next.js, and React. Experienced in
+                financial systems with PostgreSQL, MySQL, Redis, RabbitMQ, and GCP.
+              </p>
+              <p className="mt-4 text-[hsl(var(--muted-foreground))] leading-relaxed">
+                Currently a Back End Developer at Neekosa Pakar Service, placed full-time
+                at PT Pegadaian — building Golang microservices for Rahn (Islamic gold pawn)
+                and TEFS gold deposit conversion on the SPRINT platform.
+              </p>
+            </motion.div>
+          </Wobble>
 
           <div>
             <p className="text-xs font-bold uppercase tracking-[0.15em] text-[hsl(var(--muted-foreground))] mb-4">
@@ -73,17 +77,18 @@ export default function About() {
             </p>
             <div className="flex flex-wrap gap-2">
               {allSkills.map((skill, i) => (
-                <motion.span
-                  key={skill.name}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  whileInView={{ opacity: 1, scale: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ delay: i * 0.02 }}
-                  className="inline-flex items-center gap-2 bg-[hsl(var(--surface))] border border-[hsl(var(--surface-border)/0.7)] rounded-md px-3 py-2 text-sm font-medium text-[hsl(var(--foreground))]"
-                >
-                  <span className="text-base">{skill.icon}</span>
-                  {skill.name}
-                </motion.span>
+                <Wobble key={skill.name} intensity="soft" className="inline-flex">
+                  <motion.span
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    whileInView={{ opacity: 1, scale: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.02 }}
+                    className="inline-flex items-center gap-2 bg-[hsl(var(--surface))] border border-[hsl(var(--surface-border)/0.7)] rounded-md px-3 py-2 text-sm font-medium text-[hsl(var(--foreground))]"
+                  >
+                    <span className="text-base">{skill.icon}</span>
+                    {skill.name}
+                  </motion.span>
+                </Wobble>
               ))}
             </div>
           </div>

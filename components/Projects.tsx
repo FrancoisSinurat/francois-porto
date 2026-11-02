@@ -22,6 +22,7 @@ import {
 } from "@/components/ui/dialog";
 import SectionHeader from "@/components/ui/SectionHeader";
 import ImageLightbox from "@/components/ui/ImageLightbox";
+import Wobble from "@/components/ui/Wobble";
 import { cn } from "@/lib/utils";
 
 type Project = {
@@ -77,7 +78,7 @@ const projects: Project[] = [
     overview:
       "Human Capital Information System (HCIS) & company hiring portal for managing job orders, recruitment pipelines, candidate screening, interviews, and onboarding.",
     details: [
-      "Built an interactive multi-tenant HR & hiring dashboard using Vue 3, TypeScript, and Pinia.",
+      "Built an interactive multi-tenant HR & hiring dashboard using Vue 3",
       "Designed end-to-end recruitment workflows: job orders, applicant tracking, interview scheduling, and onboarding.",
       "Implemented multi-company demo switching (Acme Staffing, Nusa Care, Pacific Factory) with scoped state.",
       "Crafted responsive, modern SaaS UI components with Tailwind CSS and custom design tokens.",
@@ -336,6 +337,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
   const displayUrl = project.liveLink || project.previewUrl || "";
 
   return (
+    <Wobble intensity="medium" className="h-full">
     <Dialog>
       <DialogTrigger asChild>
         <motion.article
@@ -443,6 +445,7 @@ function ProjectCard({ project, index }: { project: Project; index: number }) {
       </DialogTrigger>
       <ProjectDialog project={project} />
     </Dialog>
+    </Wobble>
   );
 }
 
@@ -710,7 +713,7 @@ export default function Projects() {
   return (
     <section
       id="projects"
-      className="relative section-padding bg-[hsl(var(--page-bg-alt)/0.65)] backdrop-blur-[2px] border-y border-[hsl(var(--surface-border)/0.4)] scroll-mt-nav overflow-hidden"
+      className="relative section-padding border-t border-[hsl(var(--surface-border)/0.35)] scroll-mt-nav overflow-hidden"
     >
       <div className="section-container relative z-10">
         <div className="grid lg:grid-cols-[280px_1fr] gap-6 lg:gap-16 items-end mb-10 sm:mb-12">
