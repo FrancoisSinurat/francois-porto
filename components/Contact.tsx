@@ -16,8 +16,11 @@ const links = [
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative section-padding border-t border-[hsl(var(--surface-border)/0.35)] scroll-mt-nav">
-      <div className="section-container">
+    <section
+      id="contact"
+      className="relative min-h-[calc(100dvh-3.5rem)] flex flex-col justify-center section-padding border-t border-[hsl(var(--surface-border)/0.35)] scroll-mt-nav"
+    >
+      <div className="section-container w-full">
         <div className="grid lg:grid-cols-[280px_1fr] gap-10 lg:gap-16 items-start">
           <SectionHeader
             label="Contact"

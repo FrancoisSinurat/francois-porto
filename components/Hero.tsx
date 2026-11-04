@@ -1,16 +1,18 @@
 "use client";
 
-import Image from "next/image";
 import { motion } from "framer-motion";
 import { ArrowDown, Github, Gitlab, Linkedin, MapPin } from "lucide-react";
 import { handleSectionClick } from "@/lib/scroll";
+import { yearsExperienceLabel } from "@/lib/career";
 import MotionName from "@/components/ui/MotionName";
 import HeroCursorOrbs from "@/components/ui/HeroCursorOrbs";
-import Wobble from "@/components/ui/Wobble";
+import ProfileCard from "@/components/ui/ProfileCard";
 
 export default function Hero() {
+  const years = yearsExperienceLabel();
+
   return (
-    <section className="hero-surface relative min-h-screen overflow-hidden">
+    <section className="hero-surface relative min-h-screen overflow-x-clip">
       <div
         className="absolute inset-0 bg-hero-grid opacity-80"
         style={{
@@ -23,52 +25,92 @@ export default function Hero() {
       <HeroCursorOrbs />
 
       <div className="relative z-10 section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-20 pb-16">
+        {/* Photo first on mobile, right column on desktop */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ duration: 0.6, delay: 0.1 }}
+          className="order-1 lg:order-2 flex justify-center lg:justify-end pt-2 lg:pt-0"
+        >
+          <ProfileCard
+            name="Francois N. Sinurat"
+            title="Back End Developer"
+            handle="francoisnoval"
+            status="Open to freelance"
+            statusColor="#34d399"
+            contactText="Contact"
+            avatarUrl="/images/pp/copy-profile.jpeg"
+            miniAvatarUrl="/images/pp/copy-profile.jpeg"
+            theme="dark"
+            backdropColor="#0C2340"
+            holo={0.75}
+            glare={0.45}
+            tiltStrength={12}
+            parallax={8}
+            radius={16}
+            enableTilt
+            intro
+            showUserInfo
+            enableMobileTilt={false}
+            onContactClick={() => {
+              const el = document.getElementById("contact");
+              el?.scrollIntoView({ behavior: "smooth" });
+            }}
+          />
+        </motion.div>
+
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.45 }}
-          className="text-center lg:text-left"
+          className="order-2 lg:order-1 text-center lg:text-left"
         >
-          <div className="flex flex-wrap items-center justify-center lg:justify-start gap-3 mb-6">
-            <span className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--open-badge)/0.4)] bg-[hsl(var(--open-badge)/0.12)] px-3.5 py-1.5 text-sm font-medium text-emerald-300">
-              <span className="h-2 w-2 rounded-full bg-emerald-400 animate-pulse" />
-              Open to work
+          <div className="mb-5 flex flex-wrap items-center justify-center gap-x-4 gap-y-2 lg:justify-start">
+            <span className="inline-flex items-center gap-2 text-sm text-emerald-300">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400" />
+              Open to freelance
             </span>
             <span className="inline-flex items-center gap-1.5 text-sm text-[hsl(var(--hero-muted))]">
-              <MapPin className="h-3.5 w-3.5 text-[hsl(var(--accent))]" />
-              Bekasi City, Indonesia
+              <MapPin className="h-3.5 w-3.5" />
+              Bekasi, Indonesia
             </span>
           </div>
 
           <MotionName />
 
-          <p className="mt-4 text-xl sm:text-2xl font-semibold text-[hsl(var(--accent))]">
-            Software Developer
+          <p className="mt-5 text-lg font-medium tracking-tight text-[hsl(var(--accent))] sm:text-xl">
+            Full Stack Developer
           </p>
+          <p className="mt-1 text-sm text-[hsl(var(--hero-muted))]">Backend at Pegadaian</p>
 
-          <p className="mt-4 max-w-xl mx-auto lg:mx-0 text-[hsl(var(--hero-muted))] leading-relaxed text-base sm:text-lg">
-            Building scalable APIs, mobile banking backends, and system integrations
-            with Golang, Node.js, and modern web stacks.
-          </p>
+          <div className="mx-auto mt-6 flex items-center justify-center gap-3.5 lg:mx-0 lg:justify-start">
+            <span className="text-3xl font-semibold tabular-nums leading-none tracking-tight text-[hsl(var(--hero-fg))]">
+              {years.value}
+            </span>
+            <span className="h-8 w-px bg-white/15" aria-hidden />
+            <span className="text-left text-[11px] font-medium uppercase leading-tight tracking-[0.16em] text-[hsl(var(--hero-muted))]">
+              {years.suffix}
+            </span>
+          </div>
 
-          <div className="mt-8 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3">
+          <div className="mt-7 flex flex-col items-center justify-center gap-3 sm:flex-row lg:justify-start">
             <a
               href="#projects"
               onClick={(e) => handleSectionClick(e, "projects")}
-              className="inline-flex items-center justify-center rounded-xl bg-[hsl(var(--accent))] px-7 py-3 text-sm font-semibold text-white hover:bg-[hsl(var(--accent-hover))] transition-colors shadow-lg shadow-teal-500/25"
+              className="inline-flex items-center justify-center rounded-xl bg-[hsl(var(--accent))] px-6 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-[hsl(var(--accent-hover))]"
             >
-              View My Work
+              View work
             </a>
             <a
               href="#contact"
               onClick={(e) => handleSectionClick(e, "contact")}
-              className="inline-flex items-center justify-center rounded-xl border border-[hsl(222_20%_28%)] px-7 py-3 text-sm font-semibold text-[hsl(var(--hero-fg))] hover:bg-[hsl(222_20%_16%)] transition-colors"
+              className="inline-flex items-center justify-center rounded-xl border border-white/15 px-6 py-2.5 text-sm font-semibold text-[hsl(var(--hero-fg))] transition-colors hover:bg-white/5"
             >
-              Contact Me
+              Contact
             </a>
           </div>
 
-          <div className="mt-8 flex items-center justify-center lg:justify-start gap-3">
+          <div className="mt-6 flex items-center justify-center gap-2 lg:justify-start">
             {[
               { href: "https://github.com/FrancoisSinurat", icon: Github, label: "GitHub" },
               { href: "https://gitlab.com/novalsinurat28", icon: Gitlab, label: "GitLab" },
@@ -86,40 +128,6 @@ export default function Hero() {
               </a>
             ))}
           </div>
-        </motion.div>
-
-        <motion.div
-          initial={{ opacity: 0, scale: 0.95 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.6, delay: 0.15 }}
-          className="flex justify-center lg:justify-end"
-        >
-          <Wobble intensity="strong" className="relative">
-            <div className="absolute -inset-3 rounded-3xl border-2 border-[hsl(var(--accent)/0.35)] rotate-3" />
-            <div className="absolute -inset-3 rounded-3xl border border-[hsl(222_20%_28%)] -rotate-2" />
-            <div className="relative w-56 h-56 sm:w-64 sm:h-64 rounded-2xl overflow-hidden border-2 border-[hsl(222_20%_30%)]">
-              <Image
-                src="/images/pp/copy-profile.jpeg"
-                alt="Francois Novalentino Sinurat"
-                fill
-                className="object-cover"
-                priority
-              />
-            </div>
-
-            <div className="absolute -bottom-4 -left-4 sm:-left-8 card-surface px-4 py-3 shadow-lg">
-              <p className="text-xs font-bold uppercase tracking-wider text-[hsl(var(--accent))]">
-                Role
-              </p>
-              <p className="text-sm font-semibold text-[hsl(var(--foreground))] mt-0.5">
-                Software Developer
-              </p>
-            </div>
-
-            <div className="absolute -top-3 -right-3 sm:-right-6 rounded-xl bg-[hsl(var(--accent))] px-3 py-2 text-xs font-bold text-white shadow-lg">
-              Bekasi, ID
-            </div>
-          </Wobble>
         </motion.div>
       </div>
 

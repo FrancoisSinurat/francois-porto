@@ -1,10 +1,11 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { motion } from "framer-motion";
+import { useEffect, useLayoutEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
 import {
   ArrowUpRight,
+  ChevronDown,
   ExternalLink,
   Github,
   Globe,
@@ -20,7 +21,6 @@ import {
   DialogTitle,
   DialogDescription,
 } from "@/components/ui/dialog";
-import SectionHeader from "@/components/ui/SectionHeader";
 import ImageLightbox from "@/components/ui/ImageLightbox";
 import Wobble from "@/components/ui/Wobble";
 import { cn } from "@/lib/utils";
@@ -29,6 +29,10 @@ type Project = {
   id: number;
   title: string;
   description: string;
+  /** ISO month YYYY-MM — drives auto-sort */
+  start: string;
+  /** ISO month or null = ongoing / Present */
+  end: string | null;
   images: string[];
   date: string;
   skills: string[];
@@ -40,14 +44,38 @@ type Project = {
   previewUrl?: string;
   featured?: boolean;
   accent: string;
-  colSpan: string;
 };
 
-const projects: Project[] = [
+const MONTH_SHORT = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+
+function formatProjectPeriod(start: string, end: string | null): string {
+  const [sy, sm] = start.split("-").map(Number);
+  const from = `${MONTH_SHORT[(sm || 1) - 1]} ${sy}`;
+  if (!end) return `${from} — Present`;
+  const [ey, em] = end.split("-").map(Number);
+  const to = `${MONTH_SHORT[(em || 1) - 1]} ${ey}`;
+  return from === to ? from : `${from} — ${to}`;
+}
+
+/** Ongoing first, then newest by start/end. */
+function sortProjects(list: Project[]): Project[] {
+  return [...list].sort((a, b) => {
+    const aOngoing = a.end === null ? 1 : 0;
+    const bOngoing = b.end === null ? 1 : 0;
+    if (aOngoing !== bOngoing) return bOngoing - aOngoing;
+    const aKey = a.end ?? a.start;
+    const bKey = b.end ?? b.start;
+    return bKey.localeCompare(aKey) || b.start.localeCompare(a.start);
+  });
+}
+
+const projectsRaw: Project[] = [
   {
     id: 1,
     title: "Sinity Finance",
     description: "Personal Finance Web App",
+    start: "2025-03",
+    end: "2025-08",
     images: [
       "/images/project-sinity-finance/login.png",
       "/images/project-sinity-finance/dashboard.png",
@@ -66,12 +94,13 @@ const projects: Project[] = [
     previewUrl: "https://sinityfinance.vercel.app",
     featured: true,
     accent: "from-emerald-500 to-teal-600",
-    colSpan: "md:col-span-6",
   },
   {
     id: 2,
     title: "HCIS Admin Dashboard",
     description: "HR & Recruitment Portal — HireBoard",
+    start: "2026-01",
+    end: "2026-03",
     images: [],
     date: "2026",
     skills: ["Vue 3", "TypeScript", "Pinia", "Tailwind CSS", "Vite", "Vercel"],
@@ -87,12 +116,13 @@ const projects: Project[] = [
     previewUrl: "https://hcis-template.vercel.app/",
     featured: true,
     accent: "from-cyan-500 to-blue-600",
-    colSpan: "md:col-span-6",
   },
   {
     id: 3,
     title: "Sinity Course",
     description: "Final Thesis — ITERA",
+    start: "2024-12",
+    end: "2025-06",
     images: ["/images/project-1/sinity.png", "/images/project-1/sinity-2.png"],
     date: "Dec 2024 — Jun 2025",
     skills: ["Next.js", "FastAPI", "Tailwind CSS", "ShadCN UI", "GCP", "Cloud Run"],
@@ -105,15 +135,16 @@ const projects: Project[] = [
       "Deployed on GCP for scalable backend infrastructure.",
     ],
     githubLink: "https://github.com/FrancoisSinurat/sinity-course",
-    githubLinkBackend: "https://github.com/FrancoisSinurat/fix-model",
+    githubLinkBackend: "https://github.com/FrancoisSinurat/Bag-model",
     featured: true,
     accent: "from-indigo-500 to-violet-600",
-    colSpan: "md:col-span-6",
   },
   {
     id: 4,
     title: "Rekomenin",
     description: "Bangkit Capstone",
+    start: "2024-02",
+    end: "2024-07",
     images: [
       "/images/project-3/rekomenin.png",
       "/images/project-3/rekomenin-2.png",
@@ -131,12 +162,13 @@ const projects: Project[] = [
     githubLink: "https://github.com/FrancoisSinurat/rekomenin-fe",
     featured: true,
     accent: "from-sky-500 to-blue-600",
-    colSpan: "md:col-span-6",
   },
   {
     id: 5,
     title: "Asset Management",
     description: "DCKTRP Internship",
+    start: "2024-06",
+    end: "2024-08",
     images: ["/images/project-5/dcktrp.png"],
     date: "Jun — Aug 2024",
     skills: ["Laravel", "MySQL", "Bootstrap"],
@@ -148,12 +180,13 @@ const projects: Project[] = [
     ],
     githubLink: "https://github.com/FrancoisSinurat/project-laravel-app",
     accent: "from-amber-500 to-orange-600",
-    colSpan: "md:col-span-4",
   },
   {
     id: 6,
     title: "Portfolio",
     description: "This Website",
+    start: "2025-02",
+    end: null,
     images: ["/images/porto/porto.png"],
     date: "Feb 2025 — Present",
     skills: ["Next.js", "React", "Tailwind CSS", "ShadCN UI"],
@@ -162,14 +195,18 @@ const projects: Project[] = [
       "Built with modern web technologies and optimized for performance.",
       "Deployed on Vercel at francois-porto.vercel.app.",
     ],
+    liveLink: "https://francois-porto.vercel.app",
+    previewUrl: "https://francois-porto.vercel.app",
     githubLink: "https://github.com/FrancoisSinurat/francois-porto",
+    featured: true,
     accent: "from-violet-500 to-purple-600",
-    colSpan: "md:col-span-4",
   },
   {
     id: 7,
     title: "Lapduk KKN",
     description: "KKN Tematik ITERA",
+    start: "2023-12",
+    end: "2024-01",
     images: ["/images/project-2/ss2-a.png"],
     date: "Dec 2023 — Jan 2024",
     skills: ["PHP", "Bootstrap", "SQL"],
@@ -181,9 +218,15 @@ const projects: Project[] = [
     ],
     githubLink: "https://github.com/FrancoisSinurat/Lapduk-KKN",
     accent: "from-rose-500 to-pink-600",
-    colSpan: "md:col-span-4",
   },
 ];
+
+const projects = sortProjects(
+  projectsRaw.map((p) => ({
+    ...p,
+    date: formatProjectPeriod(p.start, p.end),
+  }))
+);
 
 function cleanDisplayUrl(url: string) {
   return url.replace(/^https?:\/\//, "").replace(/\/$/, "");
@@ -331,120 +374,112 @@ function StaticImageThumbnail({
 }
 
 function ProjectCard({ project, index }: { project: Project; index: number }) {
-  const isFeatured = project.featured;
   const hasLivePreview = Boolean(project.previewUrl || project.liveLink);
   const previewSrc = project.previewUrl || project.liveLink || "";
   const displayUrl = project.liveLink || project.previewUrl || "";
+  const skillLimit = 4;
 
   return (
     <Wobble intensity="medium" className="h-full">
-    <Dialog>
-      <DialogTrigger asChild>
-        <motion.article
-          whileHover={{ y: -5 }}
-          transition={{ duration: 0.22 }}
-          className={cn(
-            "group relative card-surface overflow-hidden cursor-pointer text-left h-full flex flex-col",
-            "hover:shadow-2xl hover:shadow-[hsl(var(--accent)/0.1)] hover:border-[hsl(var(--accent)/0.45)] transition-all duration-300"
-          )}
-        >
-          <div className={cn("h-1.5 w-full bg-gradient-to-r shrink-0", project.accent)} />
-
-          <span className="absolute top-4 right-4 text-4xl font-black text-[hsl(var(--foreground)/0.04)] select-none pointer-events-none z-0">
-            {String(index + 1).padStart(2, "0")}
-          </span>
-
-          {/* Preview Frame */}
-          <div
+      <Dialog>
+        <DialogTrigger asChild>
+          <motion.article
+            whileHover={{ y: -4 }}
+            transition={{ duration: 0.2 }}
             className={cn(
-              "relative overflow-hidden mx-4 mt-4 rounded-xl border border-[hsl(var(--surface-border)/0.65)] shadow-sm",
-              isFeatured ? "aspect-[16/10]" : "aspect-[16/10]"
+              "group relative card-surface overflow-hidden cursor-pointer text-left h-full flex flex-col",
+              "hover:shadow-xl hover:shadow-[hsl(var(--accent)/0.08)] hover:border-[hsl(var(--accent)/0.4)] transition-all duration-300"
             )}
           >
-            {hasLivePreview ? (
-              <LiveSiteThumbnail
-                previewUrl={previewSrc}
-                displayUrl={displayUrl}
-                title={project.title}
-                fallbackImage={project.images[0]}
-              />
-            ) : (
-              <StaticImageThumbnail
-                image={project.images[0]}
-                title={project.title}
-              />
-            )}
+            <div className={cn("h-1.5 w-full bg-gradient-to-r shrink-0", project.accent)} />
 
-            {/* Hover Action Pill */}
-            <div className="absolute bottom-3 right-3 z-20 flex items-center gap-1.5 rounded-full bg-[hsl(var(--accent))] px-3 py-1.5 text-xs font-semibold text-white shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
-              <span>{hasLivePreview ? "Interactive Preview" : "View Details"}</span>
-              <ArrowUpRight className="h-3.5 w-3.5" />
-            </div>
-          </div>
+            <span className="absolute top-3 right-3 text-3xl font-black text-[hsl(var(--foreground)/0.04)] select-none pointer-events-none z-0">
+              {String(index + 1).padStart(2, "0")}
+            </span>
 
-          {/* Card Content */}
-          <div className={cn("p-4 sm:p-5 flex flex-col flex-1 relative z-10")}>
-            <div className="flex items-center justify-between gap-2">
-              <p className="text-[10px] font-bold uppercase tracking-[0.15em] text-[hsl(var(--accent))]">
-                {project.description}
-              </p>
-              <span className="text-[11px] font-medium text-[hsl(var(--muted-foreground))] shrink-0">
-                {project.date}
-              </span>
-            </div>
-
-            <div className="mt-1.5 flex items-center justify-between gap-2">
-              <h3
-                className={cn(
-                  "font-bold text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--accent))] transition-colors",
-                  isFeatured ? "text-lg sm:text-xl" : "text-lg"
-                )}
-              >
-                {project.title}
-              </h3>
-
-              {project.liveLink && (
-                <a
-                  href={project.liveLink}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={(e) => e.stopPropagation()}
-                  className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2.5 py-1 text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors shrink-0"
-                  title="Open live website in new tab"
-                >
-                  <Globe className="h-3 w-3" />
-                  Visit Site
-                  <ExternalLink className="h-2.5 w-2.5" />
-                </a>
+            <div className="relative overflow-hidden mx-3 sm:mx-4 mt-3 sm:mt-4 rounded-xl border border-[hsl(var(--surface-border)/0.65)] shadow-sm aspect-[16/10] shrink-0">
+              {hasLivePreview ? (
+                <LiveSiteThumbnail
+                  previewUrl={previewSrc}
+                  displayUrl={displayUrl}
+                  title={project.title}
+                  fallbackImage={project.images[0]}
+                />
+              ) : (
+                <StaticImageThumbnail
+                  image={project.images[0]}
+                  title={project.title}
+                />
               )}
+
+              <div className="absolute bottom-2.5 right-2.5 z-20 flex items-center gap-1.5 rounded-full bg-[hsl(var(--accent))] px-2.5 py-1 text-[11px] font-semibold text-white shadow-lg opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all duration-200">
+                <span>{hasLivePreview ? "Preview" : "Details"}</span>
+                <ArrowUpRight className="h-3.5 w-3.5" />
+              </div>
             </div>
 
-            <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))] line-clamp-2 flex-1 leading-relaxed">
-              {project.overview}
-            </p>
-
-            <div className="mt-4 pt-3 border-t border-[hsl(var(--surface-border)/0.45)] flex flex-wrap items-center justify-between gap-2">
-              <div className="flex flex-wrap gap-1.5">
-                {project.skills.slice(0, isFeatured ? 5 : 3).map((s) => (
-                  <span
-                    key={s}
-                    className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--accent-soft))] text-[hsl(var(--accent))]"
-                  >
-                    {s}
-                  </span>
-                ))}
-                {project.skills.length > (isFeatured ? 5 : 3) && (
-                  <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md text-[hsl(var(--muted-foreground))]">
-                    +{project.skills.length - (isFeatured ? 5 : 3)}
+            <div className="p-3.5 sm:p-5 flex flex-col flex-1 relative z-10 min-h-0">
+              <div className="flex items-start justify-between gap-2 min-h-[1.25rem]">
+                <p className="text-[10px] font-bold uppercase tracking-[0.14em] text-[hsl(var(--accent))] line-clamp-1">
+                  {project.description}
+                </p>
+                {project.end === null && (
+                  <span className="shrink-0 rounded-full bg-emerald-500/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400">
+                    Ongoing
                   </span>
                 )}
               </div>
+
+              <p className="mt-1 text-[11px] font-medium text-[hsl(var(--muted-foreground))] tabular-nums">
+                {project.date}
+              </p>
+
+              <div className="mt-2 flex items-start gap-2">
+                <h3 className="flex-1 min-w-0 text-base sm:text-lg font-bold text-[hsl(var(--foreground))] group-hover:text-[hsl(var(--accent))] transition-colors leading-snug line-clamp-2">
+                  {project.title}
+                </h3>
+                {project.liveLink && (
+                  <a
+                    href={project.liveLink}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    onClick={(e) => e.stopPropagation()}
+                    className="inline-flex items-center gap-1 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-2 py-1 text-[10px] sm:text-[11px] font-semibold text-emerald-600 dark:text-emerald-400 hover:bg-emerald-500/20 transition-colors shrink-0 mt-0.5"
+                    title="Open live website"
+                  >
+                    <Globe className="h-3 w-3" />
+                    <span className="hidden min-[380px]:inline">Visit</span>
+                    <ExternalLink className="h-2.5 w-2.5" />
+                  </a>
+                )}
+              </div>
+
+              <p className="mt-2 text-sm text-[hsl(var(--muted-foreground))] line-clamp-2 leading-relaxed min-h-[2.75rem]">
+                {project.overview}
+              </p>
+
+              <div className="mt-auto pt-3 border-t border-[hsl(var(--surface-border)/0.45)]">
+                <div className="flex flex-wrap gap-1.5">
+                  {project.skills.slice(0, skillLimit).map((s) => (
+                    <span
+                      key={s}
+                      className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-[hsl(var(--accent-soft))] text-[hsl(var(--accent))]"
+                    >
+                      {s}
+                    </span>
+                  ))}
+                  {project.skills.length > skillLimit && (
+                    <span className="text-[10px] font-semibold px-1.5 py-0.5 rounded-md text-[hsl(var(--muted-foreground))]">
+                      +{project.skills.length - skillLimit}
+                    </span>
+                  )}
+                </div>
+              </div>
             </div>
-          </div>
-        </motion.article>
-      </DialogTrigger>
-      <ProjectDialog project={project} />
-    </Dialog>
+          </motion.article>
+        </DialogTrigger>
+        <ProjectDialog project={project} />
+      </Dialog>
     </Wobble>
   );
 }
@@ -709,41 +744,184 @@ function ProjectDialog({ project }: { project: Project }) {
   );
 }
 
+/** Collapsed viewport shows this many cards; expanded scrolls inside the same height. */
+const PAGE_SIZE = 6;
+
 export default function Projects() {
+  const [expanded, setExpanded] = useState(false);
+  const [lockHeight, setLockHeight] = useState<number | null>(null);
+  const blockRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const hasMore = projects.length > PAGE_SIZE;
+  const visible = expanded ? projects : projects.slice(0, PAGE_SIZE);
+
+  const collapse = () => {
+    setExpanded(false);
+    if (scrollRef.current) scrollRef.current.scrollTop = 0;
+  };
+
+  // Lock height to the collapsed "6 cards" footprint so expand doesn't grow the page
+  useLayoutEffect(() => {
+    if (expanded || !scrollRef.current) return;
+    const h = Math.ceil(scrollRef.current.getBoundingClientRect().height);
+    if (h > 0) setLockHeight(h);
+  }, [expanded, projects.length]);
+
+  // Recapture height on resize while collapsed
+  useEffect(() => {
+    if (expanded) return;
+    const onResize = () => {
+      if (!scrollRef.current) return;
+      const h = Math.ceil(scrollRef.current.getBoundingClientRect().height);
+      if (h > 0) setLockHeight(h);
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, [expanded]);
+
+  // Modal-like dismiss: click outside block or Escape → back to 6
+  useEffect(() => {
+    if (!expanded) return;
+
+    const onPointerDown = (e: PointerEvent) => {
+      const el = e.target as HTMLElement | null;
+      if (!el) return;
+      // Keep open when interacting inside the projects block
+      if (blockRef.current?.contains(el)) return;
+      // Project dialog / lightbox portal to body — don't treat as outside click
+      if (
+        el.closest('[role="dialog"]') ||
+        el.closest("[data-radix-portal]") ||
+        el.closest("[data-lightbox]")
+      ) {
+        return;
+      }
+      collapse();
+    };
+
+    const onKeyDown = (e: KeyboardEvent) => {
+      // Don't steal Esc from an open dialog
+      if (e.key !== "Escape") return;
+      if (document.querySelector('[role="dialog"][data-state="open"]')) return;
+      collapse();
+    };
+
+    document.addEventListener("pointerdown", onPointerDown);
+    document.addEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown);
+      document.removeEventListener("keydown", onKeyDown);
+    };
+  }, [expanded]);
+
   return (
     <section
       id="projects"
       className="relative section-padding border-t border-[hsl(var(--surface-border)/0.35)] scroll-mt-nav overflow-hidden"
     >
       <div className="section-container relative z-10">
-        <div className="grid lg:grid-cols-[280px_1fr] gap-6 lg:gap-16 items-end mb-10 sm:mb-12">
-          <SectionHeader
-            label="Projects"
-            title="Selected work"
-            description="Live web previews, interactive demos, and full-stack engineering projects."
-          />
-          <div className="hidden lg:flex items-center justify-end">
-            <div className="inline-flex items-center gap-2 rounded-full border border-[hsl(var(--surface-border)/0.8)] bg-[hsl(var(--surface)/0.8)] px-4 py-2 text-xs font-medium text-[hsl(var(--muted-foreground))]">
-              <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
-              Projects with a Live badge render real-time web previews
-            </div>
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between mb-8 sm:mb-10">
+          <div className="max-w-xl">
+            <div className="accent-line mb-4 sm:mb-5" />
+            <p className="text-xs font-bold uppercase tracking-[0.2em] mb-2 text-[hsl(var(--accent))]">
+              Projects
+            </p>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight leading-tight text-[hsl(var(--foreground))]">
+              Selected work
+            </h2>
+            <p className="mt-2.5 text-sm sm:text-base leading-relaxed text-[hsl(var(--muted-foreground))]">
+              Full-stack demos and production work — newest and ongoing first.
+            </p>
+          </div>
+          <div className="inline-flex self-start sm:self-auto items-center gap-2 rounded-full border border-[hsl(var(--surface-border)/0.8)] bg-[hsl(var(--surface)/0.85)] px-3.5 py-2 text-[11px] sm:text-xs font-medium text-[hsl(var(--muted-foreground))]">
+            <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
+            Live badge = real-time preview
           </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-12 gap-6">
-          {projects.map((project, index) => (
-            <motion.div
-              key={project.id}
-              initial={{ opacity: 0, y: 18 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: index * 0.05 }}
-              className={project.colSpan}
-            >
-              <ProjectCard project={project} index={index} />
-            </motion.div>
-          ))}
+        <div
+          ref={blockRef}
+          className={cn(
+            "relative rounded-2xl transition-[box-shadow,background-color] duration-300",
+            expanded &&
+              "bg-[hsl(var(--surface)/0.35)] shadow-[0_0_0_1px_hsl(var(--accent)/0.2),0_20px_50px_-28px_hsl(var(--accent)/0.35)]"
+          )}
+        >
+          <div
+            ref={scrollRef}
+            className={cn(
+              "relative",
+              expanded
+                ? "overflow-y-auto overscroll-contain scrollbar-thin pr-1"
+                : "overflow-hidden"
+            )}
+            style={
+              expanded
+                ? {
+                    height: lockHeight ?? undefined,
+                    maxHeight: lockHeight ?? "min(85vh, 920px)",
+                  }
+                : undefined
+            }
+          >
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 sm:gap-5 lg:gap-6 items-stretch p-0.5">
+              <AnimatePresence initial={false}>
+                {visible.map((project, index) => (
+                  <motion.div
+                    key={project.id}
+                    initial={expanded && index >= PAGE_SIZE ? { opacity: 0, y: 12 } : false}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{
+                      duration: 0.25,
+                      delay: expanded && index >= PAGE_SIZE
+                        ? Math.min((index - PAGE_SIZE) * 0.03, 0.2)
+                        : Math.min(index * 0.03, 0.15),
+                    }}
+                    className="h-full min-w-0"
+                  >
+                    <ProjectCard project={project} index={index} />
+                  </motion.div>
+                ))}
+              </AnimatePresence>
+            </div>
+          </div>
+
+          {/* Soft fade when collapsed and more exist */}
+          {!expanded && hasMore && (
+            <div
+              className="pointer-events-none absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[hsl(var(--page-bg))] to-transparent"
+              aria-hidden
+            />
+          )}
         </div>
+
+        {hasMore && (
+          <div className="mt-6 sm:mt-8 flex flex-col items-center gap-2">
+            {!expanded ? (
+              <button
+                type="button"
+                onClick={() => setExpanded(true)}
+                className={cn(
+                  "group inline-flex items-center gap-2 rounded-full border px-5 py-2.5 text-sm font-semibold transition-colors",
+                  "border-[hsl(var(--accent)/0.35)] bg-[hsl(var(--accent)/0.1)]",
+                  "text-[hsl(var(--foreground))] hover:bg-[hsl(var(--accent)/0.18)]"
+                )}
+              >
+                Show more
+                <ChevronDown className="h-4 w-4 text-[hsl(var(--accent))]" />
+              </button>
+            ) : (
+              <p className="text-xs text-[hsl(var(--muted-foreground))] text-center px-4">
+                Scroll inside the block · click outside or press Esc to collapse
+              </p>
+            )}
+            <p className="text-xs text-[hsl(var(--muted-foreground))] tabular-nums">
+              {expanded
+                ? `${projects.length} projects · scrollable`
+                : `Showing ${PAGE_SIZE} of ${projects.length}`}
+            </p>
+          </div>
+        )}
       </div>
     </section>
   );
