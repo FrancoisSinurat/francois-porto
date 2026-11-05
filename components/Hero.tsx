@@ -24,7 +24,7 @@ export default function Hero() {
       />
       <HeroCursorOrbs />
 
-      <div className="relative z-10 section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-20 pb-16">
+      <div className="relative z-10 section-container min-h-screen grid lg:grid-cols-[1fr_auto] gap-10 lg:gap-16 items-center pt-14 md:pt-20 pb-24 md:pb-16">
         {/* Photo first on mobile, right column on desktop */}
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}

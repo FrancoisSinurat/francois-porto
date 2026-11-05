@@ -2,8 +2,6 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { Menu, X } from "lucide-react";
-import { AnimatePresence, motion } from "framer-motion";
 import ThemeToggle from "@/components/ThemeToggle";
 import { useTheme } from "@/components/ThemeProvider";
 import GooeyNav from "@/components/ui/GooeyNav";
@@ -20,7 +18,6 @@ const BOTTOM_PIN_PX = 120;
 
 export default function Navbar() {
   const { theme, mounted } = useTheme();
-  const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const scrollLockUntil = useRef(0);
@@ -95,29 +92,6 @@ export default function Navbar() {
     lockScrollSpy();
     setActiveIndex(index);
     scrollToSection(navItems[index].toLowerCase());
-    setIsOpen(false);
-  };
-
-  const navLink = (item: string, className: string) => {
-    const id = item.toLowerCase();
-    return (
-      <a
-        href={`#${id}`}
-        onClick={(e) =>
-          handleSectionClick(e, id, () => {
-            setIsOpen(false);
-            const idx = navItems.indexOf(item);
-            if (idx >= 0) {
-              lockScrollSpy();
-              setActiveIndex(idx);
-            }
-          })
-        }
-        className={className}
-      >
-        {item}
-      </a>
-    );
   };
 
   return (
@@ -141,7 +115,7 @@ export default function Navbar() {
             Francois<span className="text-[hsl(var(--accent))]">.</span>
           </Link>
 
-          <div className="hidden md:flex flex-1 justify-center min-w-0">
+          <div className="flex flex-1 justify-center min-w-0">
             <GooeyNav
               items={gooeyItems}
               activeIndex={activeIndex}
@@ -169,45 +143,12 @@ export default function Navbar() {
                   setActiveIndex(navItems.indexOf("Contact"));
                 })
               }
-              className="hidden md:inline-flex text-sm font-semibold px-4 py-2 rounded-lg transition-colors ml-1 bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent-hover))]"
+              className="inline-flex text-sm font-semibold px-4 py-2 rounded-lg transition-colors ml-1 bg-[hsl(var(--accent))] text-white hover:bg-[hsl(var(--accent-hover))]"
             >
               Get in touch
             </a>
-            <button
-              type="button"
-              className={cn(
-                "md:hidden p-2 rounded-lg",
-                onHero ? "text-[hsl(var(--hero-fg))]" : "text-[hsl(var(--foreground))]"
-              )}
-              onClick={() => setIsOpen(!isOpen)}
-              aria-label="Toggle menu"
-            >
-              {isOpen ? <X size={22} /> : <Menu size={22} />}
-            </button>
           </div>
         </div>
-
-        <AnimatePresence>
-          {isOpen && (
-            <motion.div
-              initial={{ height: 0, opacity: 0 }}
-              animate={{ height: "auto", opacity: 1 }}
-              exit={{ height: 0, opacity: 0 }}
-              className="md:hidden overflow-hidden border-t border-[hsl(var(--surface-border)/0.5)] bg-[hsl(var(--surface))]"
-            >
-              <ul className="section-container py-3 space-y-0.5">
-                {navItems.map((item) => (
-                  <li key={item}>
-                    {navLink(
-                      item,
-                      "block py-2.5 text-[hsl(var(--muted-foreground))] font-medium hover:text-[hsl(var(--accent))]"
-                    )}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </nav>
     </header>
   );

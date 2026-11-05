@@ -68,7 +68,7 @@ export default function About() {
         <SectionHeader
           label="About"
           title="Full-stack engineer with a backend core"
-          description={`ITERA graduate with ${career.value.toLowerCase()} ${career.suffix.toLowerCase()} — production backends by day, end-to-end delivery for freelance.`}
+          description={`ITERA graduate with ${career.value} ${career.suffix} building production backends and end-to-end products.`}
         />
 
         <div className="space-y-8">
@@ -80,15 +80,18 @@ export default function About() {
               className="card-surface p-6 sm:p-8"
             >
               <p className="text-[hsl(var(--muted-foreground))] leading-relaxed text-base sm:text-lg">
-                I ship full-stack products: scalable APIs and integrations with Golang,
-                Node.js, PHP, and Python — plus modern web UIs with Next.js, React, and
-                Tailwind. Comfortable owning the path from database to polished interface.
+                Informatics Engineering graduate from Institut Teknologi Sumatera with{" "}
+                {career.value} {career.suffix.toLowerCase()} in backend and full stack web
+                development. Skilled in building scalable web applications, RESTful APIs,
+                system integrations, and cloud-based deployments using Golang, Node.js, PHP,
+                Python, Next.js, and React.js.
               </p>
               <p className="mt-4 text-[hsl(var(--muted-foreground))] leading-relaxed">
-                Professionally, I&apos;m a Back End Developer at Neekosa Pakar Service,
-                placed full-time at PT Pegadaian — building Golang microservices for Rahn
-                (Islamic gold pawn) and TEFS gold deposit conversion on SPRINT. Open to
-                full-stack freelance work alongside that role.
+                Experienced in developing financial and enterprise systems with PostgreSQL,
+                MySQL, Redis, RabbitMQ, and Google Cloud Platform. Currently a Backend
+                Developer at PT Neekosa Pakar Services placed at PT Pegadaian working on
+                Gadai Syariah Rahn Golang microservices from loan submission through
+                disbursal. Open to full-stack freelance work alongside that role.
               </p>
             </motion.div>
           </Wobble>
