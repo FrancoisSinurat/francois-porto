@@ -39,6 +39,7 @@
 .gooey-nav__stage {
   position: relative;
   max-width: 100%;
+  contain: layout paint;
 }
 
 .gooey-nav__canvas {
@@ -46,6 +47,7 @@
   top: 0;
   left: 0;
   pointer-events: none;
+  contain: strict;
 }
 
 .gooey-nav__fallback {
