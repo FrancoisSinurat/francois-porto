@@ -765,7 +765,7 @@ export default function Projects() {
     if (expanded || !scrollRef.current) return;
     const h = Math.ceil(scrollRef.current.getBoundingClientRect().height);
     if (h > 0) setLockHeight(h);
-  }, [expanded, projects.length]);
+  }, [expanded]);
 
   // Recapture height on resize while collapsed
   useEffect(() => {

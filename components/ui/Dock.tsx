@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment -- Dock is a dense interaction component; typed public API below. */
 // @ts-nocheck
 'use client';
 
@@ -8,10 +9,33 @@ import {
   useRef,
   useState,
   type CSSProperties,
+  type ReactNode,
 } from 'react';
 import { createPortal } from 'react-dom';
 
 import './Dock.css';
+
+export type DockMenuItem = {
+  label?: string;
+  icon?: ReactNode;
+  shortcut?: string;
+  disabled?: boolean;
+  checked?: boolean;
+  separator?: boolean;
+  onClick?: () => void;
+  items?: DockMenuItem[];
+};
+
+export type DockItem = {
+  icon?: ReactNode;
+  label?: string;
+  active?: boolean;
+  badge?: boolean | string | number | null;
+  separator?: boolean;
+  className?: string;
+  onClick?: () => void;
+  menu?: DockMenuItem[];
+};
 
 const SIDES = ['bottom', 'top', 'left', 'right'];
 const EDGE = 12;
@@ -442,7 +466,7 @@ function DockMenu({
 }
 
 export default function Dock({
-  items = [] as any[],
+  items = [] as DockItem[],
   position = 'bottom',
   theme = 'dark',
   baseItemSize = 50,
@@ -463,7 +487,7 @@ export default function Dock({
   className = '',
   style
 }: {
-  items?: any[];
+  items?: DockItem[];
   position?: 'bottom' | 'top' | 'left' | 'right';
   theme?: 'dark' | 'light';
   baseItemSize?: number;

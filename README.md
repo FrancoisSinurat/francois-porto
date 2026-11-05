@@ -29,8 +29,36 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Branch & deploy flow
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+```
+feature/* ──PR──► dev ──PR──► staging ──PR──► master
+   │               │            │              │
+   └─ Vercel       └─ Vercel    └─ Vercel      └─ Vercel
+      Preview         Preview      Preview        Production
+```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+| Branch | Role | Vercel |
+| --- | --- | --- |
+| `feature/*` | Work in progress | Preview URL per branch / PR |
+| `dev` | Integration / daily | Preview (optional custom domain) |
+| `staging` | Release candidate | Preview / Staging environment |
+| `master` | Production | Production domain |
+
+### Day-to-day
+
+1. `git checkout -b feature/nama-fitur` from `dev` (or `master` if hot-fixing prod).
+2. Push → Vercel spins a **Preview** automatically.
+3. Open PR → `dev` (CI runs lint + build).
+4. When ready to freeze a release: PR `dev` → `staging`.
+5. When ready to go live: PR `staging` → `master`.
+
+### Vercel dashboard (one-time)
+
+In the Vercel project → **Settings → Git / Environments**:
+
+1. **Production Branch** = `master`
+2. Keep **Preview Deployments** enabled for all non-production branches / PRs
+3. Optional: create custom environments named `Development` (`dev`) and `Staging` (`staging`) and attach domains (e.g. `dev.yoursite.com`, `staging.yoursite.com`)
+
+No extra deploy script is required — Vercel deploys on every push/PR once the GitHub repo is connected. GitHub Actions CI (`.github/workflows/ci.yml`) gates merges with lint + build.
