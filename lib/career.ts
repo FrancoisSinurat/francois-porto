@@ -21,11 +21,12 @@ export const experiences: ExperienceItem[] = [
     end: null,
     type: "Full-time · Client placement · On-site",
     highlights: [
-      "Develop and maintain Golang microservices for Pegadaian Gadai Syariah Rahn with TEFS Titipan from loan submission through disbursal.",
-      "Build end-to-end Rahn and TEFS Titipan conversion across submission, approval, confirmation, and disbursement services.",
-      "Maintain multi-stage workflow orchestration and service integrations using OpenAPI and Swagger.",
+      "Develop Golang microservices for Pegadaian's Rahn (Islamic gold pawn) product — loan submission, approval workflow, and facilities calculation.",
+      "Build TEFS (physical gold deposit) ↔ Rahn conversion flows across services, including status sync and final convert that closes Titipan when Rahn activates.",
+      "Implement multi-stage workflow orchestration: submission, verification/approval, confirmation, disbursement, and collateral check-in.",
+      "Integrate service-to-service APIs (TEFS, workflow-rahn, loan-rahn, facilities-rahn) with clear OpenAPI/Swagger contracts.",
       "Create Kafka Control Center connectors to consume and sync data from DB2 to PostgreSQL via API.",
-      "Support production delivery on Pegadaian SPRINT including API testing and UAT with Postman.",
+      "Ship and harden production features on Pegadaian's SPRINT platform with API testing and UAT support.",
     ],
   },
   {
