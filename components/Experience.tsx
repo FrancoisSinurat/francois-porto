@@ -69,7 +69,7 @@ export default function WorkExp() {
                   {exp.highlights.map((item) => (
                     <li
                       key={item}
-                      className="flex gap-3 text-sm text-[hsl(var(--muted-foreground))] leading-relaxed"
+                      className="flex gap-3 text-sm text-[hsl(var(--foreground)/0.78)] leading-relaxed"
                     >
                       <span className="mt-2 h-1.5 w-1.5 shrink-0 rounded-full bg-[hsl(var(--accent))]" />
                       <span>{item}</span>

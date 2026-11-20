@@ -20,6 +20,68 @@
   -webkit-tap-highlight-color: transparent;
 }
 
+@media (max-width: 767px) {
+  .profile-card {
+    width: min(300px, 86vw);
+  }
+}
+
+/* Mobile hero: real width shrink (no CSS scale) so layout stays centered. */
+.profile-card.profile-card--compact {
+  width: min(280px, 78vw);
+  max-width: 280px;
+  margin-inline: auto;
+}
+
+.profile-card.profile-card--compact .profile-card__body {
+  /* Flat card — no glow / halo border on mobile hero. */
+  box-shadow: inset 0 0 0 1px rgba(180, 210, 235, 0.1);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
+.profile-card.profile-card--compact .profile-card__holo,
+.profile-card.profile-card--compact .profile-card__sheen,
+.profile-card.profile-card--compact .profile-card__glare,
+.profile-card.profile-card--compact .profile-card__rim,
+.profile-card.profile-card--compact .profile-card__tile-rim {
+  display: none;
+}
+
+.profile-card.profile-card--compact .profile-card__footer {
+  gap: 8px;
+  padding: 4px 10px 6px;
+}
+
+.profile-card.profile-card--compact .profile-card__handle {
+  font-size: 12px;
+}
+
+.profile-card.profile-card--compact .profile-card__status {
+  font-size: 11px;
+}
+
+.profile-card.profile-card--compact .profile-card__contact {
+  height: 32px;
+  padding: 0 10px;
+  font-size: 12px;
+  gap: 6px;
+}
+
+.profile-card.profile-card--compact .profile-card__name {
+  font-size: 16px;
+}
+
+.profile-card.profile-card--compact .profile-card__title {
+  font-size: 12px;
+}
+
+.profile-card.profile-card--compact .profile-card__info {
+  left: 14px;
+  right: 14px;
+  bottom: 12px;
+}
+
 .profile-card__body {
   position: relative;
   display: flex;

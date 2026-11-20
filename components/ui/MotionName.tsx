@@ -35,13 +35,16 @@ function AnimatedWord({
   );
 }
 
-export default function MotionName() {
+export default function MotionName({ className }: { className?: string }) {
   const words = FIRST.split(" ");
   let letterIndex = 0;
 
   return (
     <h1
-      className="text-[clamp(2rem,5.5vw,3.75rem)] font-extrabold leading-[1.08] tracking-tight"
+      className={
+        className ??
+        "text-[clamp(2rem,5.5vw,3.75rem)] font-extrabold leading-[1.08] tracking-tight"
+      }
       aria-label={`${FIRST} ${LAST}`}
     >
       <span className="block text-[hsl(var(--hero-fg))]">
@@ -59,7 +62,7 @@ export default function MotionName() {
 
       <span className="block mt-1 overflow-hidden">
         <motion.span
-          className="block text-gradient-motion"
+          className="block text-[hsl(var(--hero-fg))]"
           initial={{ y: "110%", opacity: 0 }}
           animate={{ y: "0%", opacity: 1 }}
           transition={{

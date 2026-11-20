@@ -559,6 +559,22 @@ export default function Dock({
     wakeRef.current?.();
   });
 
+  // When swipe/navigation lands on a menu, play the same press + hop as a tap.
+  const activeIndex = items.findIndex((item) => item && !item.separator && item.active);
+  const prevActiveRef = useRef(-1);
+  useEffect(() => {
+    const prev = prevActiveRef.current;
+    prevActiveRef.current = activeIndex;
+    if (activeIndex < 0 || prev < 0 || prev === activeIndex) return;
+
+    actionsRef.current?.hop(activeIndex);
+    const node = itemRefs.current[activeIndex];
+    if (!node) return;
+    node.setAttribute('data-press', '');
+    const timer = window.setTimeout(() => node.removeAttribute('data-press'), 180);
+    return () => window.clearTimeout(timer);
+  }, [activeIndex]);
+
   useIsomorphicLayoutEffect(() => {
     if (autoHide) rootRef.current?.setAttribute('data-hidden', '');
   }, []);
@@ -686,14 +702,19 @@ export default function Dock({
         }
         if (state.hopping) moving = true;
         const size = Math.max(1, state.size);
-        const drawn = `${size.toFixed(2)} ${state.lift.toFixed(2)} ${s.side}`;
+        // Keep the selected dock item raised while active.
+        const activeLift = item.active ? Math.max(8, s.base * 0.28) : 0;
+        const totalLift = state.lift + activeLift;
+        const drawn = `${size.toFixed(2)} ${totalLift.toFixed(2)} ${s.side} ${item.active ? 1 : 0}`;
         if (drawn === state.drawn && node === state.node) return;
         state.drawn = drawn;
         state.node = node;
-        const lift = s.side === 'bottom' || s.side === 'right' ? -state.lift : state.lift;
+        const lift = s.side === 'bottom' || s.side === 'right' ? -totalLift : totalLift;
         const tile = node.firstElementChild;
         node.style.width = `${size}px`;
         node.style.height = `${size}px`;
+        if (item.active) node.setAttribute('data-active', '');
+        else node.removeAttribute('data-active');
         if (tile)
           tile.style.transform = `translate(${s.vertical ? `${lift}px, 0` : `0, ${lift}px`}) scale(${size / s.base})`;
       });
