@@ -324,7 +324,13 @@ const GooeyNav = ({
     if (!stage || !canvas || !list || !overlay || !fallback) return;
 
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const gl = canvas.getContext('webgl2', { alpha: true, premultipliedAlpha: true, antialias: false });
+    const gl = canvas.getContext('webgl2', {
+      alpha: true,
+      premultipliedAlpha: true,
+      antialias: false,
+      powerPreference: 'high-performance',
+      desynchronized: true,
+    });
     const pipeline = gl ? build(gl) : null;
     fallback.style.display = pipeline ? 'none' : 'block';
     canvas.style.display = pipeline ? 'block' : 'none';
@@ -361,10 +367,12 @@ const GooeyNav = ({
     let raf = 0;
     let last = 0;
     let disposed = false;
+    let clipFrame = 0;
 
     const measure = () => {
       const box = stage.getBoundingClientRect();
-      const ratio = Math.min(window.devicePixelRatio || 1, 2);
+      // Cap DPR — full 2x retina is overkill for a tiny nav canvas and tanks fill-rate.
+      const ratio = Math.min(window.devicePixelRatio || 1, 1.5);
       view.width = box.width;
       view.height = box.height;
       const outerWidth = box.width + MARGIN * 2;
@@ -390,7 +398,8 @@ const GooeyNav = ({
     const trace = (
       boxes: { cx: number; cy: number; hw: number; hh: number }[],
       blobs: { x: number; y: number; r: number; tx: number; ty: number; tint: number[] | null }[],
-      smooth: number
+      smooth: number,
+      quality: 'hi' | 'lo' = 'hi'
     ) => {
       const field = (x: number, y: number) => {
         let d = 1e5;
@@ -417,25 +426,31 @@ const GooeyNav = ({
         }
         return d;
       };
-      const step = 2;
+      // Lo quality (~4–6x fewer samples) keeps text clip in sync without tanking the main thread.
+      const stepX = quality === 'lo' ? 5 : 3;
+      const stepY = quality === 'lo' ? 3 : 2;
       const parts: string[] = [];
-      for (let y = 0; y < view.height; y += 1) {
-        const cy = y + 0.5;
+      for (let y = 0; y < view.height; y += stepY) {
+        const cy = y + stepY * 0.5;
         let previous = field(0, cy);
         let start: number | null = previous < 0 ? 0 : null;
-        for (let x = step; x <= view.width + step; x += step) {
+        for (let x = stepX; x <= view.width + stepX; x += stepX) {
           const value = field(Math.min(x, view.width), cy);
           if (previous < 0 !== value < 0) {
-            const cross = x - step + (step * previous) / (previous - value);
+            const cross = x - stepX + (stepX * previous) / (previous - value);
             if (value < 0) start = cross;
             else if (start !== null) {
-              parts.push(`M${start.toFixed(1)},${y}H${cross.toFixed(1)}V${y + 1}H${start.toFixed(1)}Z`);
+              parts.push(
+                `M${start.toFixed(1)},${y}H${cross.toFixed(1)}V${y + stepY}H${start.toFixed(1)}Z`
+              );
               start = null;
             }
           }
           previous = value;
         }
-        if (start !== null) parts.push(`M${start.toFixed(1)},${y}H${view.width}V${y + 1}H${start.toFixed(1)}Z`);
+        if (start !== null) {
+          parts.push(`M${start.toFixed(1)},${y}H${view.width}V${y + stepY}H${start.toFixed(1)}Z`);
+        }
       }
       return parts.join('');
     };
@@ -546,11 +561,18 @@ const GooeyNav = ({
       }
 
       const settledPill = boxes.length === 1 && !blobs.length;
-      if (settledPill) {
-        const box = boxes[0];
-        overlay.style.clipPath = `path('${pillPath(box.cx - box.hw, box.cy - box.hh, box.hw * 2, box.hh * 2)}')`;
-      } else {
-        overlay.style.clipPath = `path('${trace(boxes, blobs, smooth) || 'M0,0Z'}')`;
+      const busy = blobs.length > 0;
+      clipFrame += 1;
+      // Text clip-path is CPU SDF — throttle + lower sample density while particles fly.
+      // WebGL canvas still paints every frame, so the gooey look stays smooth.
+      const shouldClip = settledPill || !busy || clipFrame % 2 === 0;
+      if (shouldClip) {
+        if (settledPill) {
+          const box = boxes[0];
+          overlay.style.clipPath = `path('${pillPath(box.cx - box.hw, box.cy - box.hh, box.hw * 2, box.hh * 2)}')`;
+        } else {
+          overlay.style.clipPath = `path('${trace(boxes, blobs, smooth, busy ? 'lo' : 'hi') || 'M0,0Z'}')`;
+        }
       }
       overlay.style.visibility = 'visible';
 

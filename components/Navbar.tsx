@@ -123,12 +123,12 @@ export default function Navbar() {
               theme={gooeyTheme}
               size="sm"
               frame
-              particleCount={11}
-              spread={40}
-              animationTime={820}
-              timeVariance={140}
-              gooeyness={0.82}
-              wobble={0.28}
+              particleCount={6}
+              spread={32}
+              animationTime={520}
+              timeVariance={70}
+              gooeyness={0.62}
+              wobble={0.18}
               hoverEffect
             />
           </div>

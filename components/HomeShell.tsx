@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState, type TouchEvent } from "react";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import Projects from "@/components/Projects";
@@ -11,7 +11,11 @@ import DevActivity from "@/components/DevActivity";
 import Contact from "@/components/Contact";
 import AnimatedBackground from "@/components/ui/AnimatedBackground";
 import ThemeToggle from "@/components/ThemeToggle";
-import MobileDock, { type MobilePageId } from "@/components/MobileDock";
+import MobileDock, {
+  DOCK_HEIGHT_PX,
+  PAGE_ORDER,
+  type MobilePageId,
+} from "@/components/MobileDock";
 import { SECTION_NAV_EVENT } from "@/lib/scroll";
 
 const PAGE_FROM_HASH: Record<string, MobilePageId> = {
@@ -21,6 +25,9 @@ const PAGE_FROM_HASH: Record<string, MobilePageId> = {
   projects: "projects",
   contact: "contact",
 };
+
+const SWIPE_MIN_DX = 56;
+const SWIPE_MAX_RATIO = 1.15;
 
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState<boolean | null>(null);
@@ -72,7 +79,7 @@ function DesktopHome() {
 function MobilePage({ active }: { active: MobilePageId }) {
   switch (active) {
     case "home":
-      return <Hero />;
+      return <Hero compact />;
     case "about":
       return (
         <section className="relative border-t border-[hsl(var(--surface-border)/0.35)]">
@@ -96,12 +103,14 @@ function MobilePage({ active }: { active: MobilePageId }) {
     case "contact":
       return <Contact />;
     default:
-      return <Hero />;
+      return <Hero compact />;
   }
 }
 
 function MobileHome() {
   const [page, setPage] = useState<MobilePageId>("home");
+  const touchStart = useRef<{ x: number; y: number } | null>(null);
+  const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const applyHash = () => {
@@ -110,7 +119,8 @@ function MobileHome() {
     };
     const onSectionNav = (event: Event) => {
       const id = (event as CustomEvent<{ id?: string }>).detail?.id?.toLowerCase();
-      if (id && PAGE_FROM_HASH[id]) setPage(PAGE_FROM_HASH[id]);
+      if (id && PAGE_FROM_HASH[id]) setPage(PAGE_FROM_HASH[id] as MobilePageId);
+      if (id === "home") setPage("home");
     };
     applyHash();
     window.addEventListener("hashchange", applyHash);
@@ -134,21 +144,72 @@ function MobileHome() {
     };
   }, []);
 
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 });
+  }, [page]);
+
   const go = (id: MobilePageId) => {
     setPage(id);
     const next = id === "home" ? window.location.pathname : `#${id}`;
     window.history.replaceState(null, "", next);
   };
 
+  const onTouchStart = (event: TouchEvent<HTMLDivElement>) => {
+    const touch = event.touches[0];
+    if (!touch) return;
+    touchStart.current = { x: touch.clientX, y: touch.clientY };
+  };
+
+  const onTouchEnd = (event: TouchEvent<HTMLDivElement>) => {
+    const start = touchStart.current;
+    touchStart.current = null;
+    if (!start) return;
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+
+    const dx = touch.clientX - start.x;
+    const dy = touch.clientY - start.y;
+    if (Math.abs(dx) < SWIPE_MIN_DX) return;
+    if (Math.abs(dx) < Math.abs(dy) * SWIPE_MAX_RATIO) return;
+
+    const index = PAGE_ORDER.indexOf(page);
+    if (index < 0) return;
+    if (dx < 0 && index < PAGE_ORDER.length - 1) go(PAGE_ORDER[index + 1]);
+    if (dx > 0 && index > 0) go(PAGE_ORDER[index - 1]);
+  };
+
+  const lockHero = page === "home";
+
   return (
-    <div className="relative h-dvh overflow-hidden">
-      <AnimatedBackground />
+    <div
+      className={
+        lockHero
+          ? "relative h-dvh w-full min-w-0 overflow-hidden bg-[hsl(210_40%_8%)]"
+          : "relative h-dvh w-full min-w-0 overflow-hidden bg-[hsl(var(--page-bg))]"
+      }
+    >
+      {/* Mesh only on hero — content pages stay clean so cards don't clash. */}
+      {lockHero ? <AnimatedBackground /> : null}
       <div className="absolute right-3 top-3 z-50">
         <ThemeToggle onHero={page === "home"} />
       </div>
-      <div className="relative z-10 h-full overflow-y-auto overscroll-contain pb-[92px]">
+
+      {/* Full-screen content; padding keeps scroll end above the floating icons. */}
+      <div
+        ref={contentRef}
+        className={
+          lockHero
+            ? "absolute inset-0 z-10 overflow-hidden overscroll-none"
+            : "absolute inset-0 z-10 overflow-y-auto overscroll-contain"
+        }
+        style={lockHero ? undefined : { paddingBottom: DOCK_HEIGHT_PX }}
+        onTouchStart={onTouchStart}
+        onTouchEnd={onTouchEnd}
+      >
         <MobilePage active={page} />
       </div>
+
+      {/* Floating dock — outer strip + pill transparent, only tiles show. */}
       <MobileDock active={page} onChange={go} />
     </div>
   );

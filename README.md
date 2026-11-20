@@ -31,34 +31,38 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 
 ## Branch & deploy flow
 
+Personal projects use a **simplified Neekosa-style** flow (office has `dev → staging → prod`; here staging is skipped):
+
 ```
-feature/* ──PR──► dev ──PR──► staging ──PR──► master
-   │               │            │              │
-   └─ Vercel       └─ Vercel    └─ Vercel      └─ Vercel
-      Preview         Preview      Preview        Production
+feature/* ──PR (+ CI)──► dev ──(auto Promote workflow)──► master
+   │                      │                                │
+   └─ Vercel Preview      └─ Vercel Preview                └─ Vercel Production
+                                                              francois-porto.vercel.app
 ```
 
-| Branch | Role | Vercel |
+| Branch | Role | Deploy |
 | --- | --- | --- |
-| `feature/*` | Work in progress | Preview URL per branch / PR |
-| `dev` | Integration / daily | Preview (optional custom domain) |
-| `staging` | Release candidate | Preview / Staging environment |
-| `master` | Production | Production domain |
+| `feature/*` | Work in progress | Vercel Preview URL |
+| `dev` | Integration / “ready” | Preview + **auto-promotes to `master`** |
+| `master` | Production | `francois-porto.vercel.app` |
+| `staging` | Unused for personal (optional leftover) | — |
 
 ### Day-to-day
 
-1. `git checkout -b feature/nama-fitur` from `dev` (or `master` if hot-fixing prod).
-2. Push → Vercel spins a **Preview** automatically.
-3. Open PR → `dev` (CI runs lint + build).
-4. When ready to freeze a release: PR `dev` → `staging`.
-5. When ready to go live: PR `staging` → `master`.
+1. Branch from `dev`: `git checkout -b feature/nama-fitur`
+2. Push → Vercel **Preview** + CI on PR
+3. Open **PR → `dev`**, wait until Lint & Build is green, then merge
+4. Workflow **Promote Dev to Prod** syncs `dev` → `master`
+5. Vercel redeploys production automatically
+
+Hot-fix only: PR straight into `master` (rare).
 
 ### Vercel dashboard (one-time)
 
-In the Vercel project → **Settings → Git / Environments**:
+Project → **Settings → Git**:
 
-1. **Production Branch** = `master`
-2. Keep **Preview Deployments** enabled for all non-production branches / PRs
-3. Optional: create custom environments named `Development` (`dev`) and `Staging` (`staging`) and attach domains (e.g. `dev.yoursite.com`, `staging.yoursite.com`)
+1. **Production Branch** = `master` (required for this flow)
+2. Keep **Preview Deployments** on for non-production branches / PRs
 
-No extra deploy script is required — Vercel deploys on every push/PR once the GitHub repo is connected. GitHub Actions CI (`.github/workflows/ci.yml`) gates merges with lint + build.
+CI: `.github/workflows/ci.yml`  
+Promote: `.github/workflows/promote-dev-to-prod.yml`
