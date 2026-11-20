@@ -1,0 +1,52 @@
+# Personal flow (simplified Neekosa-style):
+#   feature/* ──PR──► dev ──(this workflow)──► master (= Vercel Production)
+#
+# After merging a feature PR into `dev`, master is updated automatically so
+# francois-porto.vercel.app redeploys. Keep Vercel Production Branch = `master`.
+
+name: Promote Dev to Prod
+
+on:
+  push:
+    branches: [dev]
+
+concurrency:
+  group: promote-dev-to-prod
+  cancel-in-progress: false
+
+permissions:
+  contents: write
+
+jobs:
+  promote:
+    name: Sync master ← dev
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Fast-forward master to dev
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin dev master
+          git checkout -B master origin/master
+
+          if git merge-base --is-ancestor origin/dev master; then
+            echo "master already contains origin/dev — nothing to promote."
+            exit 0
+          fi
+
+          if git merge --ff-only origin/dev; then
+            echo "Fast-forwarded master to origin/dev."
+          else
+            git merge origin/dev -m "chore: promote dev to master (prod)"
+            echo "Merged origin/dev into master."
+          fi
+
+          git push origin master

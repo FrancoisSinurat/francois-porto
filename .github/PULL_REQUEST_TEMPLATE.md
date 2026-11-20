@@ -1,16 +1,10 @@
-## Summary
-- 
+## Target
 
-## Target branch
-- [ ] `dev` — integration / daily preview
-- [ ] `staging` — release candidate
-- [ ] `master` — production
+- [ ] `dev` — merge feature here (auto-promotes to `master` / production)
+- [ ] `master` — hot-fix only (skip if going through `dev`)
 
 ## Checklist
-- [ ] `npm run lint` passes
-- [ ] `npm run build` passes locally
-- [ ] Preview deploy on Vercel looks good
-- [ ] No secrets / `.env` in the diff
 
-## Test plan
-- [ ] 
+- [ ] CI Lint & Build green
+- [ ] Preview on Vercel looks good
+- [ ] No secrets in the diff
